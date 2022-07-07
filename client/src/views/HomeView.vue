@@ -1,15 +1,15 @@
 <template>
-  <hello-world />
+  <LoginReg/>
 </template>
 
 <script>
-  import HelloWorld from '../components/HelloWorld'
+  import LoginReg from '../components/LoginReg.vue'
 
   export default {
     name: 'Home_View',
 
     components: {
-      HelloWorld,
+      LoginReg,
     },
   }
 </script>
