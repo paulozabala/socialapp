@@ -12,7 +12,7 @@ var userSchema = Schema({
 	birthday:Date,
 	sex:String,
 	img:String,
-	msg:String,
+	msg:String
 	});
 
 module.exports = mongoose.model('UserM', userSchema);

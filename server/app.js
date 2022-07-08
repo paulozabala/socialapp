@@ -1,4 +1,4 @@
-//importando modulos
+//getting external modules
 const express =  require('express');
 const app = express();
 const path = require('path');
@@ -7,6 +7,10 @@ const cors = require('cors');
 const history = require('connect-history-api-fallback');
 const mongoose = require('mongoose');
 const dotenv = require ('dotenv');
+
+//getting internal modules.
+const routes = require('./routes/routes');
+
 
 //setting listening port
 app.set('port',process.env.PORT || 3000);
@@ -35,10 +39,13 @@ app.use(express.urlencoded({extended:true}));
 app.use(history());
 app.use(express.static(path.join(__dirname,'public')));
 
-//Set home route
-app.get("/",function(req,res){
-	res.send("running")
-});
+//Set routes
+
+app.use("/api",routes);
+
+//app.get("/",function(req,res){
+//	res.send("running")
+//});
 
 app.listen(app.get("port"),function(){
 	console.log("listening port:" + app.get("port"));
