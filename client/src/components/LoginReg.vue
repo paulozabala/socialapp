@@ -1,68 +1,64 @@
 <template>
 	<v-container>
-		<v-row class="text-center">
-			<v-col cols="4">
-				<v-card>
+		<v-row class="text-center pa-8" >
+			<v-col  md="6" sm="6" xs="12" align='center' >
 				<v-img
 					src="../assets/community.svg" 
 					alt="community"
 					contain
-					height="auto"
-					width="auto"
+					width="600px"
+					height="400px"
 				/>  <!--contain   causes picture not to be cropped -->
-				</v-card>
 			</v-col>
-			<v-col cols="2"/>	
-			<v-col cols="6">
-			<form>
-    <v-text-field
-      v-model="name"
-      :error-messages="nameErrors"
-      :counter="10"
-      label="Name"
-      required
-      @input="$v.name.$touch()"
-      @blur="$v.name.$touch()"
-    ></v-text-field>
-    <v-text-field
-      v-model="email"
-      :error-messages="emailErrors"
-      label="E-mail"
-      required
-      @input="$v.email.$touch()"
-      @blur="$v.email.$touch()"
-    ></v-text-field>
-    <v-select
-      v-model="select"
-      :items="items"
-      :error-messages="selectErrors"
-      label="Item"
-      required
-      @change="$v.select.$touch()"
-      @blur="$v.select.$touch()"
-    ></v-select>
-    <v-checkbox
-      v-model="checkbox"
-      :error-messages="checkboxErrors"
-      label="Do you agree?"
-      required
-      @change="$v.checkbox.$touch()"
-      @blur="$v.checkbox.$touch()"
-    ></v-checkbox>
-
-    <v-btn
-      class="mr-4"
-      @click="submit"
-    >
-      submit
-    </v-btn>
-    <v-btn @click="clear">
-      clear
-    </v-btn>
-  </form>
 			
+			<v-col  md="5" sm="5" xs="12" class="pa-10" offset="1" offset-xl="0">
+				<span class="text-h4 text-sm-h4 font-weight-black"> Login</span>
+				<form class="">
+					<v-text-field
+						v-model="name"
+						:error-messages="nameErrors"
+						:counter="10"
+						label="Name"
+						required
+						@input="$v.name.$touch()"
+						@blur="$v.name.$touch()"
+						></v-text-field>
+					<v-text-field
+						v-model="email"
+						:error-messages="emailErrors"
+						label="E-mail"
+						required
+						@input="$v.email.$touch()"
+						@blur="$v.email.$touch()"
+					></v-text-field>
+					<v-select
+						v-model="select"
+						:items="items"
+						:error-messages="selectErrors"
+						label="Item"
+						required
+						@change="$v.select.$touch()"
+						@blur="$v.select.$touch()"
+					></v-select>
+					<v-checkbox
+						v-model="checkbox"
+						:error-messages="checkboxErrors"
+						label="Do you agree?"
+						required
+						@change="$v.checkbox.$touch()"
+						@blur="$v.checkbox.$touch()"
+					></v-checkbox>
+					<v-btn
+						class="mr-4"
+						@click="submit"
+					>
+						submit
+					</v-btn>
+					<v-btn @click="clear">
+						clear
+					</v-btn>
+				</form>
 			</v-col>
-		
 		</v-row>
 	</v-container>
 </template>
