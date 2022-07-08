@@ -1,8 +1,10 @@
 //importando modulos
 const express =  require('express');
 const app = express();
+const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
+const history = require('connect-history-api-fallback');
 const mongoose = require('mongoose');
 const dotenv = require ('dotenv');
 
@@ -23,6 +25,15 @@ mongoose.connect(dir,options)
 		console.log('error al conectarse a MongoDB: ',error);
 	});
 
+//middlewares
+app.use(morgan('tiny'));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+
+//middleware para vue
+app.use(history());
+app.use(express.static(path.join(__dirname,'public')));
 
 //Set home route
 app.get("/",function(req,res){
