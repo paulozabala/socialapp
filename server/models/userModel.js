@@ -11,7 +11,8 @@ var userSchema = Schema({
 	password:String,
 	birthday:Date,
 	sex:String,
-	img:String
+	img:String,
+	msg:String,
 	});
 
 module.exports = mongoose.model('UserM', userSchema);
