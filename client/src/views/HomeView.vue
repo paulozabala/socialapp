@@ -1,15 +1,41 @@
 <template>
-  <LoginReg/>
+	<container>
+		<row>
+			<Vote_Rank />
+		</row>
+		<row>
+			<v-card>
+				<v-col>
+					<v-avatar>
+					
+					</v-avatar>
+				</v-col>
+
+				<v-text-field
+					v-model="first"
+					label="First Name"
+					outlined
+					rounded
+				></v-text-field>
+			</v-card>
+		</row>
+	
+
+
+	</container>
+
+
+
+
 </template>
 
 <script>
-  import LoginReg from '../components/LoginReg.vue'
+import Vote_Rank from '../components/VoteRank.vue'
+export default {
+	name: 'Home_View',
 
-  export default {
-    name: 'Home_View',
-
-    components: {
-      LoginReg,
-    },
-  }
+	components: {
+		Vote_Rank,
+},
+}
 </script>
