@@ -6,7 +6,6 @@ import vuetify from './plugins/vuetify'
 import Vuelidate from 'vuelidate'
 
 
-
 Vue.config.productionTip = false
 
 new Vue({

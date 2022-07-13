@@ -11,10 +11,11 @@
 
 <script>
 import Main_Bar from './components/MainBar.vue'
+
 export default {
 	name: 'App',
 	components:{
-		Main_Bar
+		Main_Bar,
 }
 };
 </script>
