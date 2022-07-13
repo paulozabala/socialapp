@@ -1,6 +1,6 @@
 <template>
 	<v-sheet
-		class="mx-auto"
+		class=""
 		elevation="8"
 		max-width="800"
 	>
