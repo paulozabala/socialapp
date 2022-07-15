@@ -1,7 +1,7 @@
 <template>
 	<v-container fluid>
 		<v-row align="start" >
-			<v-col  align="center" >
+			<v-col class="pa-0"  align="center" >
 				<Profile_Page/>
 			</v-col>
 		</v-row>

@@ -1,5 +1,5 @@
 <template>
-	<v-container>
+	<v-container >
 		<v-row class="text-center pa-8" >
 			<v-col  md="6" sm="5" xs="12" align='center' >
 				<v-img
@@ -11,13 +11,13 @@
 				/>  <!--contain   causes picture not to be cropped -->
 			</v-col>
 			
-			<v-col  md="5" sm="6" xs="12" class="pa-10" offset="1" offset-xl="0" >
-				<span class="text-h4 text-sm-h4 font-weight-black">Login</span>
-				<form class="">
+			<v-col  md="5" sm="6" xs="12" class="pa-10" align="center"  offset="1" offset-xl="0" >
+				<span :class="$vuetify.breakpoint.width<=254 ? 'ml-n8 text-h4 text-sm-h4 font-weight-black':'text-h4 text-sm-h4 font-weight-black'">Login</span>
+				<form :class="$vuetify.breakpoint.width<=254 ? 'ml-n8' : ''">
 					<v-text-field
 						v-model="userName"
 						:error-messages="nameErrors"
-						:counter="10"
+						:counter="8"
 						label="Nombre de usuario"
 						autocomplete
 						required
@@ -40,68 +40,6 @@
 					>
 						Ingresar
 					</v-btn><br>
-<v-dialog
-      v-model="dialog"
-      persistent
-      max-width="600px"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          fab
-        >
-				<v-img
-					src="../assets/logo.svg" 
-					alt="community"
-					contain
-					width="60px"
-					height="40px"
-				/>  <!--contain   causes picture not to be cropped -->
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">User Profile</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  label="Legal first name*"
-                  required
-                ></v-text-field>
-              </v-col>
-	</v-row>
-	</v-container>
-	</v-card-text>
-<v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-					<span class="">Registrarse</span>
 				</form>
 			</v-col>
 		</v-row>

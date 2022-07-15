@@ -3,7 +3,9 @@
 	<v-card :width="ancho || 500">
 		<!--Header-->
 		<v-card flat  tile class="d-flex justify-center mt-0" width="500">
-			<v-card flat width="100%" ></v-card>
+			<v-card @click="hola()" class="d-flex justify-center flex-column" flat width="100%" >
+				<v-icon block>more_horiz</v-icon>
+			</v-card>
 			<v-card flat width="100%" ></v-card>
 			<v-card flat width="100%" >
 				<v-avatar class="mt-2 mb-2" size="50">
@@ -14,7 +16,7 @@
 			</v-card>
 			<v-card flat width="100%" ></v-card>
 			<v-card flat class="d-flex align-center" width="100%">
-				<v-card flat @click="hola()" width="100%" >
+				<v-card @click="hola()" flat  width="100%" >
 					<v-icon block color="blue">
 						keyboard_double_arrow_up
 					</v-icon>
@@ -22,7 +24,7 @@
 				
 				<v-card></v-card>
 						
-				<v-card flat  @click="hola()" width="100%" >
+				<v-card @click="hola()" flat width="100%" >
 					<v-icon block color="red" >
 						keyboard_double_arrow_down
 					</v-icon>

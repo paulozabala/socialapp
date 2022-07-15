@@ -19,7 +19,7 @@ const routes = [
 	},
 
 	{
-		path: '/login-reg',
+		path: '/home/login-reg',
 		name: 'Login_Reg',
 		component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
 	},
