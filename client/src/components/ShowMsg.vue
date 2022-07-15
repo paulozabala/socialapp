@@ -1,7 +1,8 @@
 <template>
-	<!--Home public msg box(head&body)-->
-	<v-card width="500">
-		<v-card flat  tile class="d-flex justify-center mt-6" width="500">
+	<!--Home public msg box(head&body) it has dynamic card's width from props-->
+	<v-card :width="ancho || 500">
+		<!--Header-->
+		<v-card flat  tile class="d-flex justify-center mt-0" width="500">
 			<v-card flat width="100%" ></v-card>
 			<v-card flat width="100%" ></v-card>
 			<v-card flat width="100%" >
@@ -30,7 +31,8 @@
 		</v-card>
 
 		<v-divider width="85%"></v-divider>
-
+		
+		<!--body-->
 		<v-card flat  tile class="d-flex align-center flex-column mt-2 " width="500">
 			<v-card flat  width="100%">
 				<v-card-title class="d-flex justify-center text-sm-h5">{{user}}</v-card-title>
@@ -41,7 +43,8 @@
 				>{{longmsg}}</v-card-text>
 			</v-card>
 		</v-card>
-		<v-divider width="95%"></v-divider>	
+		<v-divider width="95%"></v-divider>
+		
 		<!--Public msg box buttons-->
 		<v-card class="d-flex justify-center pa-2  mb-6" flat  width="500">
 			<v-card  @click="hola()" class="" flat  width="100%">
@@ -67,13 +70,16 @@ import moment from 'moment'
 	
 export default {
 		name:'Show_Msg',
-		
+
+		props:{
+			ancho:Number
+		},
 		data: function (){
 			return {
 			messages:'hoy vi que faltaba un pedazo de mi corazón, eras tú!!! sin tanto despecho dijo ella con su corazon de piedra y alma fria sin amor.',
 			user: 'Fabiano Spaguetti',
 			time: moment().format('h:mm a'),//Date.now()
-			longmsg: "Lorem ipsum dolor sit amet consectetur adipiscing elit, aenean cubili a enim vulputate vehicula est facilisis, ac libero varius diam maecenas leo. Curabitur inceptos quis integer diam cras velit sollicitudin, fames a id ligula cursus torquent, sagittis habitasse eros cubilia in odio. Libero ridiculus facilisi mattis eu vehicula sodales cras dictum consequat mollis himenaeos, nec posuere commodo per hac feugiat scelerisque sollicitudin potenti id volutpat curabitur, enim curae eget montes maecenas nunc phasellus tellus suscipit luctus. Vestibulum habitant posuere condimentum dictumst nostra euismod primis, nisi mus cubilia aliquet mattis dignissim accumsan, vehicula non luctus cum tellus integer,"
+			longmsg: "Lorem ipsum dolor sit amet consectetur adipiscing elit, aenean cubili a enim vulputate vehicula est facilisis, ac libero varius diam maecenas leo. Curabitur inceptos quis integer diam cras velit sollicitudin, fames a id ligula cursus torquent, sagittis habitasse eros cubilia in odio. Libero ridiculus facilisi mattis eu vehicula sodales cras dictum consequat mollis himenaeos, nec posuere commodo per hac feugiat scelerisque sollicitudin potenti id volutpat curabitur, enim curae eget montes maecenas nunc phasellus tellus suscipit luctus. Vestibulum habitant posuere condimentum dictumst nostra euismod primis, nisi mus cubilia aliquet mattis dignissim accumsan, vehicula non luctus cum tellus integerasdfasdfasdfasdfasdfasdfasdfasdfasfasdfasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafdadsfasdfdafsdfasdfasdfasdfsdfqweqwefqwefdfasdfasdfasdfqrewqwerqweqwefsadfasdfasdflkjdkjadklfjoiqfijdfkljasdkfjoiqweoijfl;kasjdfioqwefkljasdlfjioqwefksdfiqwelaksjdsf;ajfqejf;laksjdsfiaiofq,"
 			}
 		},
 		

@@ -1,5 +1,11 @@
 <template>
-	<Profile_Page/>
+	<v-container fluid>
+		<v-row align="start" >
+			<v-col  align="center" >
+				<Profile_Page/>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>
 
 <script>
