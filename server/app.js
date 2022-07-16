@@ -35,17 +35,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+//Setting routes
+app.use("/api",routes);
+
+//Instruccion de prueba inicial
+//app.get("/",function(req,res){
+//	res.send("running")
+//});
+
 //middleware para vue
 app.use(history());
 app.use(express.static(path.join(__dirname,'public')));
 
-//Set routes
 
-app.use("/api",routes);
-
-//app.get("/",function(req,res){
-//	res.send("running")
-//});
 
 app.listen(app.get("port"),function(){
 	console.log("listening port:" + app.get("port"));

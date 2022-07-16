@@ -18,7 +18,7 @@ var controller = require('../controller/controller.js');
 //router.get('/get-image/:image', controller.getImage);
 //router.get('/search/:search', controller.search);
 
-
+router.get('/test',controller.test);
 
 //Rutas para  -> mensajes
 //router.post('/save2', ArticleController.save2);

@@ -18,4 +18,4 @@ var userSchema = Schema({
 	msg:String
 	});
 
-module.exports = mongoose.model('UserM', userSchema);
+module.exports = mongoose.model('UserS', userSchema);

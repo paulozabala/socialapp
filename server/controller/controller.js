@@ -3,6 +3,12 @@ const userModel = require('../models/userModel');
 
 var  controller = {
 
+	test: (req, res) => {
+		return res.status(200).json({
+			message: 'Soy la acción test de mi controlador de articulos'
+		});
+	},
+	
 	saveUser:async (req, res) => {
 
 	// Recoger parametros por post
@@ -10,14 +16,9 @@ var  controller = {
 
 	//Validar datos (validator)
 
-		try {var validate_name = !validator.isEmpty(params.name);
-			var validate_lastname = !validator.isEmpty(params.lastname);
-			var validate_email = !validator.isEmpty(params.email);
+		try {
+			var validate_userName = !validator.isEmpty(params.userName);
 			var validate_password = !validator.isEmpty(params.password);
-			var validate_birthday = !validator.isEmpty(params.birthday);
-			var validate_sex = !validator.isEmpty(params.sex);
-			var validate_img = !validator.isEmpty(params.img);
-			var validate_msg = !validator.isEmpty(params.msg);
 		} catch (err) {
 			return res.status(200).send({
 				status: 'error',
@@ -25,26 +26,24 @@ var  controller = {
 			});
 		}
 
-		if (validate_name &&
-			validate_lastname &&
-			validate_email &&
-			validate_password &&
-			validate_birthday &&
-			validate_sex &&
-			validate_img &&
-			validate_msg
+		if (validate_userName &&
+			validate_password
 		) {
 
 			//Crear el objeto a guardar
 
 			var register = new userModel();
+			
 			// Asignar valores
+			register.userName = params.userName;
+			register.password = params.password;
 			register.name = params.name;
 			register.lastname = params.lastname;
-			register.email = params.email;
-			register.password = params.password;
-			register.birthday = params.birthday;
 			register.sex = params.sex;
+			register.description = params.description;
+			register.birthday = params.birthday;
+			register.interests = params.interests;
+			register.lookingfor = params.lookingfor;
 			register.img = params.img;
 			register.msg = params.msg;
 
@@ -79,16 +78,16 @@ var  controller = {
 
 //function to get an user by email/userName if exist
 
-	getClient: async (req, res) => {
+	getClient:  (req, res) => {
 		
 		var profile = req.params.prof;
-		var query = login.find({email: profile});
+		var query = userModel.find({userName : profile});
 
 		if (profile || profile != undefined) {
 			query.limit(5);
 		}
 		// Find
-		await query.sort('email').exec((err, userFound) => {
+		query.sort('userName').exec((err, userFound) => {
 
 			if (err) {
 				return res.status(500).send({
@@ -106,7 +105,7 @@ var  controller = {
 
 			return res.status(200).send({
 				status: 'success',
-				userFound
+				userFound : userFound
 			});
 		});
     },

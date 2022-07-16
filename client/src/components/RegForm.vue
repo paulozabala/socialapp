@@ -76,17 +76,18 @@
 											active-class="blue--text text--accent-4"
 										>
 											<template v-slot:default="{ active }">
-											<v-list-item-content>
-												<v-list-item-title v-text="item"></v-list-item-title>
-											</v-list-item-content>
+			
+												<v-list-item-action>
+													<v-checkbox
+														:input-value="active"
+														color="blue accent-4"
+													></v-checkbox>
+												</v-list-item-action>
 
-											<v-list-item-action>
-												<v-checkbox
-													:input-value="active"
-													color="blue accent-4"
-												></v-checkbox>
-											</v-list-item-action>
-											</template>
+												<v-list-item-content>
+													<v-list-item-title v-text="item"></v-list-item-title>
+												</v-list-item-content>
+											</template>	
 										</v-list-item>
 										</template>
 									</v-list-item-group>
