@@ -33,7 +33,7 @@ export default {
 	components:{
 		Reg_Form
 	},
-	
+
 	mounted() {
 		let flag = localStorage.getItem("userName");
 		if(flag){

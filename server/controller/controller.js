@@ -61,7 +61,7 @@ var  controller = {
 				// Devolver una respuesta 
 				return res.status(200).send({
 					status: 'success',
-					userModel: userStored
+					userStored
 				});
 
 			});
@@ -96,9 +96,9 @@ var  controller = {
 				});
 			}
 
-			if (!userFound) {
-				return res.status(404).send({
-					status: 'error',
+			if (!userFound || userFound=='' ) {
+				return res.status(200).send({
+					status: 'noUser',
 					message: 'Usuario no Existe !!!'
 				});
 			}

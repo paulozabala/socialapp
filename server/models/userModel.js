@@ -12,10 +12,10 @@ var userSchema = Schema({
 	sex:String,
 	description:String,
 	birthday:Date,
-	interests:String,
+	interests:Array,
 	lookingfor:String,
 	img:String,
-	msg:String
+	msg:Array,
 	});
 
 module.exports = mongoose.model('UserS', userSchema);
