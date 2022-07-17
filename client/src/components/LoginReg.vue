@@ -90,7 +90,7 @@ export default {
 		nameErrors () {
 			const errors = []
 			if (!this.$v.userName.$dirty) return errors
-			!this.$v.userName.maxLength && errors.push('Nombre  debe tener como maximot 8 caracteres')
+			!this.$v.userName.maxLength && errors.push('Nombre  debe tener como maximo 8 caracteres')
 			!this.$v.userName.required && errors.push('userName es requerido.')
 			return errors
 		},
@@ -138,7 +138,6 @@ export default {
 										window.open("/"+nameDB,"_self",
 										"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
 									}, 1500);
-									//this.$router.push("/" + nameDB);
 								}else{
 									this.errorAlert=true;
 									}
