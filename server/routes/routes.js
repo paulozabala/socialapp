@@ -20,15 +20,22 @@ var controller = require('../controller/controller.js');
 
 router.get('/test',controller.test);
 
-//Rutas para  -> mensajes
-//router.post('/save2', ArticleController.save2);
-//router.post('/save1', ArticleController.save1);
-//router.get('/historial/:id', ArticleController.getHistorial);
-
-//Rutas -> login
+//Login-reg routes
+router.get('/searchprofile/:prof', controller.getUser);
 router.post('/saveUser', controller.saveUser);
-router.get('/searchprofile/:prof', controller.getClient);
 //router.get('/searchprofile/:user', ArticleController.getUser);
+
+//Routing for -> msg
+router.get('/getMsg', controller.getMsgs);
+router.get('/getMsgByOwner/:id', controller.getMsgByOwner);
+router.post('/saveMsg', controller.saveMsg);
+
+//Comment routes
+router.get('/getComments/:id', controller.getComments);
+router.post('/saveComment', controller.saveComment);
+
+
+
 
 
 module.exports = router;
