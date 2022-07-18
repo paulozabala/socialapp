@@ -20,9 +20,10 @@ var controller = require('../controller/controller.js');
 
 router.get('/test',controller.test);
 
-//Login-reg routes
+//Login-reg / user routes
 router.get('/searchprofile/:prof', controller.getUser);
 router.post('/saveUser', controller.saveUser);
+router.put('/modUser/:id', controller.updateUser);
 //router.get('/searchprofile/:user', ArticleController.getUser);
 
 //Routing for -> msg

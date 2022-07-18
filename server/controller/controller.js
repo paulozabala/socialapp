@@ -16,7 +16,7 @@ var  controller = {
 
 	saveUser:async (req, res) => {
 
-		// Colect parameters form url
+		// Colect parameters from url
 		var params = req.body;
 
 		//Validate data (validator)
@@ -150,7 +150,7 @@ var  controller = {
 
 	saveComment:async (req, res) => {
 
-		// Colect parameters form url
+		// Colect parameters from url
 		var params = req.body;
 
 		//Validate data (validator)
@@ -356,6 +356,82 @@ var  controller = {
 		});
     },
 
+
+//----------------------------------PUT-FUNCTIONS--------------------------------------//
+	
+	//Updating User's Info
+	updateUser: (req, res) => {
+
+
+		// Collect id from url
+		var userd = req.params.id;
+
+		// Collect parameters from put
+		var params = req.body;
+
+		//Validate data (validator)
+
+		try {
+			var validate_userName = !validator.isEmpty(params.userName);
+			var validate_password = !validator.isEmpty(params.password);
+			var validate_name = !validator.isEmpty(params.name);
+			var validate_lastname = !validator.isEmpty(params.lastname);
+			var validate_sex = !validator.isEmpty(params.sex);
+			var validate_description = !validator.isEmpty(params.description);
+			var validate_birthday = !validator.isEmpty(params.birthday);
+			var validate_interests = !validator.isEmpty(params.interests);
+			var validate_lookingfor = !validator.isEmpty(params.lookingfor);
+			//var validate_img = !validator.isEmpty(params.img);
+			//var validate_msg = !validator.isEmpty(params.msg);
+
+		} catch (err) {
+			return res.status(200).send({
+				status: 'error',
+				message: 'Faltan datos por enviar !!!'
+			});
+		}
+
+		if (validate_userName &&
+			validate_password &&
+			validate_name &&
+			validate_lastname &&
+			validate_sex &&
+			validate_description &&
+			validate_birthday &&
+			validate_interests &&
+			validate_lookingfor
+		) {
+
+			// Find and update
+			userModel.findOneAndUpdate({_id: userd}, params, { new: true }, (err, userUpdated) => {
+				if (err) {
+					return res.status(500).send({
+						status: 'error',
+						message: 'Error al actualizar !!!'+err
+					});
+				}
+
+				if (!userUpdated) {
+					return res.status(200).send({
+						status: 'noUser',
+						message: 'No existe el usuario !!!'
+					});
+				}
+
+				//return successful answer
+				return res.status(200).send({
+					status: 'success',
+					userUp:userUpdated
+				});
+			});
+		} else {
+			// Return error if validation fails
+			return res.status(200).send({
+				status: 'error',
+				message: 'La validación no es correcta !!!'
+			});
+		}
+	},
 
 }; //end of controller
 
