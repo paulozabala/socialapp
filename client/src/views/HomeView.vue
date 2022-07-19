@@ -16,7 +16,7 @@
 
 					<!--calling msgs from db-->
 					<v-card class="d-flex align-center flex-column mt-6 " flat color="grey" width="500">
-						<v-card v-for="i in 4" :key="i" flat color="grey">
+						<v-card flat color="success">
 							<Show_Msg :ancho="500"/>
 						</v-card>
 					</v-card>

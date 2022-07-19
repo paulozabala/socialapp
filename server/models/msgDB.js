@@ -6,6 +6,8 @@ var Schema = mongoose.Schema;
 
 var msgSchema = Schema({
 	ownerID:String,
+	userName:String,
+	img:String,
 	msg:String,
 	whoVotes:Array,
 	whoLikes:Array,

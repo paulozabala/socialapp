@@ -1,13 +1,20 @@
 <template>
 	<!--Home public msg box(head&body) it has dynamic card's width from props-->
-	<v-card :width="ancho || 500">
+	<v-card color="blue">
+	<v-card v-for="i in msgDataOk" :key="i._id" :width="ancho || 500" >
 		<!--Header-->
 		<v-card flat  tile class="d-flex justify-center mt-0" width="500">
+		
+			<!--menu btns(no used in this version) -->
 			<v-card @click="hola()" class="d-flex justify-center flex-column" flat width="100%" >
 				<v-icon block>more_horiz</v-icon>
 			</v-card>
+			
 			<v-card flat width="100%" ></v-card>
+			
+			<!--avatar btn-->	
 			<v-card flat width="100%" >
+				
 				<v-avatar class="mt-2 mb-2" size="50">
 					<v-img
 						src="../assets/avatar.jpeg"
@@ -15,6 +22,8 @@
 				</v-avatar>
 			</v-card>
 			<v-card flat width="100%" ></v-card>
+
+			<!--Rank btns-->		
 			<v-card flat class="d-flex align-center" width="100%">
 				<v-card @click="hola()" flat  width="100%" >
 					<v-icon block color="blue">
@@ -37,12 +46,12 @@
 		<!--body-->
 		<v-card flat  tile class="d-flex align-center flex-column mt-2 " width="500">
 			<v-card flat  width="100%">
-				<v-card-title class="d-flex justify-center text-sm-h5">{{user}}</v-card-title>
-				<v-card-subtitle class="d-flex justify-start ">{{time}}</v-card-subtitle>
+				<v-card-title class="d-flex justify-center text-sm-h5">{{'userID: '+i.ownerID}}</v-card-title>
+				<v-card-subtitle class="d-flex justify-start ">{{i.date}}</v-card-subtitle>
 				<v-card-text class="text-caption text-sm-body-1  text-justify"
 					v-model="messages"
 					outlined
-				>{{longmsg}}</v-card-text>
+				>{{i.msg}}</v-card-text>
 			</v-card>
 		</v-card>
 		<v-divider width="95%"></v-divider>
@@ -65,9 +74,13 @@
 			</v-card>
 		</v-card>
 	</v-card>
+	</v-card>
 </template>
 
 <script>
+import axios from 'axios'
+//import server's url
+import {Global} from '../assets/global.js'
 import moment from 'moment'
 	
 export default {
@@ -76,19 +89,71 @@ export default {
 		props:{
 			ancho:Number
 		},
+
+		computed:{
+
+			//Get date in a proper format to be present on web
+			msgDataOk(){
+				
+				let msgData = this.msgData;
+
+				for (let i=0;i<this.leng;i++){
+					msgData[i].date = moment(this.msgData[i].date).format('LLL')
+				}
+				return msgData;
+			},
+
+		},
+
+
+		mounted() {
+			
+			//Getting messages data when mounted.
+			this.getMsg();
+						},
+
+
 		data: function (){
 			return {
-			messages:'hoy vi que faltaba un pedazo de mi corazón, eras tú!!! sin tanto despecho dijo ella con su corazon de piedra y alma fria sin amor.',
-			user: 'Fabiano Spaguetti',
-			time: moment().format('h:mm a'),//Date.now()
-			longmsg: "Lorem ipsum dolor sit amet consectetur adipiscing elit, aenean cubili a enim vulputate vehicula est facilisis, ac libero varius diam maecenas leo. Curabitur inceptos quis integer diam cras velit sollicitudin, fames a id ligula cursus torquent, sagittis habitasse eros cubilia in odio. Libero ridiculus facilisi mattis eu vehicula sodales cras dictum consequat mollis himenaeos, nec posuere commodo per hac feugiat scelerisque sollicitudin potenti id volutpat curabitur, enim curae eget montes maecenas nunc phasellus tellus suscipit luctus. Vestibulum habitant posuere condimentum dictumst nostra euismod primis, nisi mus cubilia aliquet mattis dignissim accumsan, vehicula non luctus cum tellus integerasdfasdfasdfasdfasdfasdfasdfasdfasfasdfasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafdadsfasdfdafsdfasdfasdfasdfsdfqweqwefqwefdfasdfasdfasdfqrewqwerqweqwefsadfasdfasdflkjdkjadklfjoiqfijdfkljasdkfjoiqweoijfl;kasjdfioqwefkljasdlfjioqwefksdfiqwelaksjdsf;ajfqejf;laksjdsfiaiofq,"
+				
+				url:Global.url,
+				msgData:'',
+				leng:null,
+				//test variables
+				user: 'Fabiano Spaguetti',
+				time: moment().format('h:mm a'),//Date.now()
+
+				messages:'hoy vi que faltaba un pedazo de mi corazón, eras tú!!!'+ 
+					'sin tanto despecho dijo ella con su corazon de piedra y alma fria sin amor.',
+				longmsg:'Lorem ipsum dolor sit amet consectetur adipiscing elit,'+
+					'aenean cubili a enim vulputate vehicula est facilisis, ac libero varius'+
+					'diam maecenas leo. Curabitur inceptos quis integer diam cras velit'+
+					' sollicitudin, fames a id ligula cursus torquent, sagittis habitasse'+
+					' eros cubilia in odio. Libero ridiculus facilisi mattis eu vehicula',
 			}
 		},
 		
 		methods:{
 			hola(){
 				alert("funciona el componente Show_Msg");
-			}
+			},
+
+			//function to get messages
+			getMsg(){
+				axios
+				.get(this.url+"getMsg")
+				.then((res)=>{
+					if (res.data.status=="success"){
+						console.log("msgFound es:",res.data.msgFound);
+						this.msgData=res.data.msgFound;
+						console.log("msgData es:",this.msgData[2]);
+						this.leng=this.msgData.length;
+					}
+
+				}).catch((error)=>{
+					console.log("request error, wasnt successful",error);
+					});
+			},
 		},
 
 };
