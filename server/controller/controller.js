@@ -2,7 +2,8 @@ const validator = require('validator');
 const userModel = require('../models/userModel');
 const msgDB = require('../models/msgDB');
 const commentsDB = require('../models/commentsDB');
-
+var fs = require('fs');
+var path = require('path');
 
 
 var  controller = {
@@ -211,6 +212,132 @@ var  controller = {
 
 	},
 
+
+	//Function to save img on  msg
+	saveImg: (req,res) => {
+
+		// receive the file comming from the request
+		var file_name = 'Imagen no subida...';
+
+		if (!req.files) {
+			return res.status(404).send({
+				status: 'error',
+				message: file_name
+			});
+		}
+
+		// Get the file's name and ext.
+		var file_path = req.files.id.path;
+		console.log("params.id es init: ", req.params.id);
+		console.log("filename init", file_path);
+		var file_split = file_path.split('/');
+		
+		//* WARNING * For windows OS use:
+			//var file_split = file_path.split('\\');
+		// * WARNING* * For LINUX O MAC OS use:
+			// var file_split = file_path.split('/');
+
+		// splitting to get File's name
+		var file_name = file_split[2];
+
+		// File's extension
+		console.log("filename before getting ext", file_name);
+		var extension_split = file_name.split('\.');
+		var file_ext = extension_split[1];
+		console.log("llego antes de checar ext");
+		
+		//Checking the proper img file's extension, if it is not, then delete the file.
+		if (file_ext != 'png' && file_ext != 'jpg' && file_ext != 'jpeg' && file_ext != 'gif') {
+
+			// delete the uploaded file
+			fs.unlink(file_path, (err) => {
+				return res.status(200).send({
+					status: 'error',
+					message: 'La extensión de la imagen no es válida !!!'
+				});
+			});
+
+		}else {		console.log("entreo al final");
+				return res.status(200).send({
+					status: 'success',
+					image: file_name
+				});
+			}
+
+	}, // end saveImg
+
+	//Function to save profile's img
+	savePImg: (req,res) => {
+
+		// collecting the file / checking if exist
+		var file_name = 'Imagen no subida...';
+
+		if (!req.files) {
+			return res.status(404).send({
+				status: 'error',
+				message: file_name
+			});
+		}
+
+		//Getting file's name and ext.
+		var file_path = req.files.id.path;
+		console.log("path es:", file_path);
+		var file_split = file_path.split('/');
+		
+		//* WARNING * For windows OS use:
+			//var file_split = file_path.split('\\');
+		// * WARNING* * For LINUX O MAC OS use:
+			// var file_split = file_path.split('/');
+
+		//File's name
+		var file_name = file_split[2];
+
+		
+		// File's Extension
+		var extension_split = file_name.split('\.');
+		var file_ext = extension_split[1];
+		
+		// Checking the img file's proper extension, if it is not, then delete the file.
+		if (file_ext != 'png' && file_ext != 'jpg' && file_ext != 'jpeg' && file_ext != 'bmp') {
+
+			//Delete uploaded file
+			fs.unlink(file_path, (err) => {
+				return res.status(200).send({
+					status: 'error',
+					message: 'La extensión de la imagen no es válida !!!'
+				});
+			});
+
+		} else {
+			//if everything is allright take the id form url
+			var userId = req.params.id;
+
+			if (userId) {
+				//search user's profile, attach the img's name and update
+				userModel.findOneAndUpdate({ _id: userId }, { img: file_name }, { new: true }, (err, userUpdated) => {
+
+					if (err || !userUpdated) {
+						return res.status(200).send({
+							status: 'error',
+							message: 'Error al guardar la imagen del usuario!!'
+						});
+					}
+
+					return res.status(200).send({
+						status: 'success',
+						user: userUpdated
+					});
+				});
+			}	else	{
+					return res.status(200).send({
+						status: 'success',
+						image: file_name
+					});
+			}
+		}
+	}, // end saveImg
+
+
 //-----------------------------------GETTERS--------------------------------------------//-
 	
 	//function to get an user by userName if exist
@@ -356,6 +483,24 @@ var  controller = {
 		});
     },
 
+	//Getting the img.
+	getImage: (req, res) => {
+		//getting the name and building the path of the img
+		var file = req.params.image;
+		var path_file = './upload/profilepics/' + file;
+		
+		//searching if exist
+		fs.exists(path_file, (exists) => {
+			if (exists) {
+				return res.sendFile(path.resolve(path_file));
+			} else {
+				return res.status(404).send({
+					status: 'error',
+					message: 'La imagen no existe !!!'
+				});
+			}
+		});
+	},
 
 //----------------------------------PUT-FUNCTIONS--------------------------------------//
 	

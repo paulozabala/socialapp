@@ -1,11 +1,11 @@
 import express from 'express';
 const router = express.Router();
-
+//const path = require('path')
 var controller = require('../controller/controller.js');
 
 //middleware files management
-//var multipart = require('connect-multiparty');
-//var md_upload = multipart({ uploadDir: './upload/articles'});
+var multipart = require('connect-multiparty');
+var md_upload = multipart({ uploadDir: './upload/profilepics/'});
 
 
 // Rutas
@@ -14,17 +14,21 @@ var controller = require('../controller/controller.js');
 //router.get('/article/:id', controller.getArticle);
 //router.put('/article/:id', controller.update);
 //router.delete('/article/:id', controller.delete);
-//router.post('/upload-image/:id?', md_upload, controller.upload);
-//router.get('/get-image/:image', controller.getImage);
-//router.get('/search/:search', controller.search);
 
+
+//test route
 router.get('/test',controller.test);
 
+//Image routes
+router.post('/saveImage/:id?', md_upload, controller.savePImg);
+router.post('/uploadImage/:id?', md_upload, controller.saveImg);
+router.get('/getImage/:image', controller.getImage);
+
+
 //Login-reg / user routes
-router.get('/searchprofile/:prof', controller.getUser);
+router.get('/searchProfile/:prof', controller.getUser);
 router.post('/saveUser', controller.saveUser);
 router.put('/modUser/:id', controller.updateUser);
-//router.get('/searchprofile/:user', ArticleController.getUser);
 
 //Routing for -> msg
 router.get('/getMsg', controller.getMsgs);

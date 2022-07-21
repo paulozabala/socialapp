@@ -12,12 +12,14 @@
   "license": "MIT",
   "dependencies": {
     "connect-history-api-fallback": "^2.0.0",
+    "connect-multiparty": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongoose": "^6.4.3",
     "morgan": "^1.10.0",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "watchpack": "^2.4.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.6",
