@@ -277,6 +277,7 @@
 import { validationMixin } from 'vuelidate'
 import { required, maxLength } from 'vuelidate/lib/validators'
 const axios = require('axios');
+import {Global} from '../assets/global.js'
 
 export default{
 	name:'Reg_Form',
@@ -293,9 +294,9 @@ export default{
 			dialogNoAvailable:false,
 			dialogSaved:false,
 			dialogError:false,
-			sexarray:['Femenino','Masculino','Prefiero no decirlo'],
-			interarray:['Ciclismo','Deportes','Programación','Salud y Bienestar','Viajes y cultura','Videojuegos','Gastronomia'],
-			lookingarray:['Amistad','Una relación','Solo pasarla bien','Intimidad Sexual'],
+			sexarray:Global.sexarray,
+			interarray:Global.interarray,
+			lookingarray:Global.lookingarray,
 			url:'http://localhost:3000/api/',
 			userName:'',
 			password:'',
@@ -340,7 +341,7 @@ export default{
 			this.dialogNoAvailable=false;
 			this.dialogSaved=false;
 			this.dialogError=false;
-	
+
 			var userNoBD = this.userName;
 			
 			if ( userNoBD  == "" || userNoBD.length <= 4) {
@@ -351,7 +352,7 @@ export default{
 
 				//doing the request if user exists
 				axios
-					.get(this.url + "searchprofile/" + userNoBD)
+					.get(this.url + "searchProfile/" + userNoBD)
 					.then((res) => {
 						if (res.data.status == "success") {
 							this.dialogNoAvailable=true;

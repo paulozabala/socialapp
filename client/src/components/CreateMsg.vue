@@ -84,6 +84,7 @@
 
 		data(){
 			return{
+				msg:'',
 				dialog:false,
 				rules: [v => v.length <= 300 || 'Max 300 caracteres'],
 				value: 'Escribe tu historia aqui...',

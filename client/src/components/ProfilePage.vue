@@ -20,7 +20,7 @@
 					<v-col cols="2" md="1" lg="1" xl="0" color="blue accent-8" size="50"></v-col>
 					<v-col cols="8" md="3" lg="2" xl="2" >
 						<v-avatar  :size=" $vuetify.breakpoint.width<=290 ?'80' : '160'"  >
-							<v-img src="../assets/avatar.jpeg"/>
+							<v-img :src=route />
 						</v-avatar>
 					</v-col>
 					<v-col cols="2" md="8" lg="9" xl="10" ></v-col>
@@ -61,26 +61,26 @@
 			<!--Information card-->
 			<v-card class="mb-4"
 				:width="$vuetify.breakpoint.width<=885 ? '530' : ''"
-				max-height="800"
+				max-height="800" max-width="400"
 			>
-				<v-card-title>
+				<v-card-title class="d-flex justify-center text-h5">
 					Información personal
 				</v-card-title>
-
-				<v-card-subtitle>
-					{{'description'}}
+				
+				<v-card-subtitle class="d-flex justify-center text-h6 text-capitalize">
+					{{userinfo.name+' '+userinfo.lastname}}
 				</v-card-subtitle>
 
-				<v-card-text>
-					{{name+' '+lastname}}
-				</v-card-text>
-		
-				<v-card-text>
-					<span>Cumpleaños:</span> {{'birthday'}}
+				<v-card-text class="d-flex justify-start text-justify">
+					{{userinfo.description}}
 				</v-card-text>
 
-				<v-card-text>
-					{{'Sexo: sex'}}
+				<v-card-text class="d-flex justify-start text-justify">
+					<span>Cumpleaños:</span> {{birthdate}}
+				</v-card-text>
+
+				<v-card-text class="d-flex justify-start text-justify">
+					Sexo: {{sexfix}}
 				</v-card-text>
 
 				<!--card's actions & transitions-->
@@ -105,8 +105,8 @@
 					<div v-show="show">
 						<v-divider width="90%"></v-divider>
 
-						<v-card-text>
-							{{'interests'}}
+						<v-card-text v-for="interest in this.userinfo.interests" :key="interest">
+							{{interest}}
 						</v-card-text>
 					</div>
 				</v-expand-transition>
@@ -133,7 +133,7 @@
 						<v-divider width="90%"></v-divider>
 
 						<v-card-text>
-							{{'lookingfor'}}
+							{{lookingfix}}
 						</v-card-text>
 					</div>
 				</v-expand-transition>
@@ -148,7 +148,7 @@
 
 
 
-	<!--dialogs for changing pictures and ...-->
+	<!-- dialog for changing profile picture -->
 	<v-dialog v-model="picsDialog" width="400"><v-card cols="12" class="d-flex align-center flex-column pa-4" width="100%"  >
 			<v-card-title :class="$vuetify.breakpoint.width<=290 ? 'text-body-2' : '' ">Carga tu archivo</v-card-title>
 			<v-card-text flat tile class="d-flex justify-start pa-6" color="white"  width="100%" >
@@ -172,8 +172,10 @@
 
 	</v-dialog>
 
-
-
+	<!--Snackbar to alert user's profile unexistence-->
+	<v-snackbar v-model="snackbar">
+		{{snacktext}}
+	</v-snackbar>
 
 	</v-card>
 
@@ -182,6 +184,7 @@
 <script>
 import Show_Msg from '../components/ShowMsg.vue'
 import axios from 'axios'
+import moment from 'moment'
 import {Global} from "../assets/global.js"
 
 
@@ -193,7 +196,8 @@ export default{
 	},
 
 	computed:{
-
+		
+		//variable for verifying user's edit privileges
 		login(){
 
 			let localst = localStorage.getItem('userName');
@@ -205,12 +209,56 @@ export default{
 			}else return false;
 		},
 
+		//fixing variables according to showing needs
+		interestsin(){
+			return this.userinfo.interests[0];
+			},
+
+		birthdate(){
+			let birthday = moment(this.userinfo.birthday).add(1,'day').format("MMM Do");
+			return birthday;
+		},
+
+		lookingfix(){
+
+			let look = this.userinfo.lookingfor;
+			return this.lookingarray[look];
+		},
+
+		sexfix(){
+
+			let sx = this.userinfo.sex;
+			return this.sexarray[sx];
+		},
 
 	},
 
+	created(){
+
+			let user = this.$route.params.id;
+			axios
+			.get(this.url+'searchProfile/'+user)
+			.then((res)=>{
+
+				if(res.data.status=="success"){
+					this.userinfo = res.data.userFound[0];
+					
+					//create the route for profile's avatar-img, couldnt be written in computed
+					//it causes Get's problems because this.userinfo didnt charge fast enough.
+					this.route = this.url+'getImage/'+this.userinfo.img;
+				}
+
+			}).catch((error)=>{
+				console.log("no fue posible conectar con la BD",error);
+				});
+
+
+	},
 
 	data:function(){
 		return{
+
+			userinfo:'',
 			description:'',
 			name:'',
 			lastname:'',
@@ -226,14 +274,22 @@ export default{
 				value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
 			],
 			url:Global.url,
-};
+			snackbar:false,
+			snacktext:'Ups! Usuario No Existe en Nuestros Registros',
+			lookingarray:Global.lookingarray,
+			sexarray:Global.sexarray,
+			route:'',
+		};
 	},
 
 	methods:{
+
+		//Flag that calls a dialog to change the user's profile picture
 		changePic(){
 			this.picsDialog=true;
 		},
-
+		
+		//Sending the picture to server and saving the pictures name into the user DB
 		sendFile(){
 
 			let formData = new FormData()

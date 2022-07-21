@@ -34,7 +34,7 @@ export default {
 		Reg_Form
 	},
 
-	mounted() {
+	created() {
 		let flag = localStorage.getItem("userName");
 		if(flag){
 			this.loggedIn=true;
