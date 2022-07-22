@@ -90,11 +90,10 @@ var  controller = {
 		//Validate data (validator)
 
 		try {
-			var validate_ownerID = !validator.isEmpty(params.userID);
+			var validate_ownerName = !validator.isEmpty(params.ownerName);
 			var validate_msg = !validator.isEmpty(params.msg);
-			var validate_whoVotes = !validator.isEmpty(params.whoVotes);
-			var validate_whoLikes= !validator.isEmpty(params.whoLikes);
-			var validate_date = !validator.isEmpty(params.date);
+			var validate_img = !validator.isEmpty(params.img);
+			var validate_mdate = !validator.isEmpty(params.mdate);
 		} catch (err) {
 			return res.status(200).send({
 				status: 'error',
@@ -102,11 +101,10 @@ var  controller = {
 			});
 		}
 
-		if (validate_ownerID &&
+		if (validate_ownerName &&
 			validate_msg &&
-			validate_whoVotes &&
-			validate_whoLikes &&
-			validate_date
+			validate_img &&
+			validate_mdate
 		) {
 
 			//Create the object to save
@@ -114,11 +112,12 @@ var  controller = {
 			var register = new msgDB();
 			
 			// Passing values for being saved
-			register.ownerID = params.userID;
+			register.ownerName = params.ownerName;
 			register.msg = params.msg;
+			register.img = params.img;
 			register.whoVotes = params.whoVotes;
 			register.whoLikes = params.whoLikes;
-			register.date = params.date;
+			register.mdate = params.mdate;
 
 			// Save object on DB
 		
@@ -247,7 +246,7 @@ var  controller = {
 		console.log("llego antes de checar ext");
 		
 		//Checking the proper img file's extension, if it is not, then delete the file.
-		if (file_ext != 'png' && file_ext != 'jpg' && file_ext != 'jpeg' && file_ext != 'gif') {
+		if ( file_ext != 'png' && file_ext != 'jpg' && file_ext != 'jpeg' && file_ext != 'bmp' && file_ext != 'svg') {
 
 			// delete the uploaded file
 			fs.unlink(file_path, (err) => {
@@ -423,7 +422,7 @@ var  controller = {
 		}
 		
 		// Sort - descending
-		query.sort({date: -1}).exec((err, msgFound) => {
+		query.sort({mdate: -1}).exec((err, msgFound) => {
 
 			if (err) {
 				return res.status(500).send({

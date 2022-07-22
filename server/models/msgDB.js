@@ -5,13 +5,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var msgSchema = Schema({
-	ownerID:String,
-	userName:String,
-	img:String,
+	ownerName:String,
 	msg:String,
+	img:String,
 	whoVotes:Array,
 	whoLikes:Array,
-	date:Date,
+	mdate:Date,
 	});
 
 module.exports = mongoose.model('msgDB', msgSchema);

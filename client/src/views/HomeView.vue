@@ -10,13 +10,9 @@
 					</v-card>
 					
 					<!--calling box to create msg-->
-					<v-card flat color="grey">
-						<Create_Msg/>
-					</v-card>
-
 					<!--calling msgs from db-->
 					<v-card class="d-flex align-center flex-column mt-6 " flat color="grey" width="500">
-						<v-card flat color="success">
+						<v-card flat color="grey" >
 							<Show_Msg :ancho="500"/>
 						</v-card>
 					</v-card>
@@ -32,7 +28,6 @@
 //debo agregar css para  la card
 <script>
 import Vote_Rank from '../components/VoteRank.vue'
-import Create_Msg from '../components/CreateMsg.vue'
 import Show_Msg from '../components/ShowMsg.vue'
 
 export default {
@@ -40,7 +35,6 @@ export default {
 
 	components: {
 		Vote_Rank,
-		Create_Msg,
 		Show_Msg
 	},
  
