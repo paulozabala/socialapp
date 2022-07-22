@@ -93,6 +93,7 @@ var  controller = {
 			var validate_ownerName = !validator.isEmpty(params.ownerName);
 			var validate_msg = !validator.isEmpty(params.msg);
 			var validate_img = !validator.isEmpty(params.img);
+			//var validate_like = !validator.isEmpty(params.like);
 			var validate_mdate = !validator.isEmpty(params.mdate);
 		} catch (err) {
 			return res.status(200).send({
@@ -104,6 +105,7 @@ var  controller = {
 		if (validate_ownerName &&
 			validate_msg &&
 			validate_img &&
+			//validate_like &&
 			validate_mdate
 		) {
 
@@ -117,6 +119,7 @@ var  controller = {
 			register.img = params.img;
 			register.whoVotes = params.whoVotes;
 			register.whoLikes = params.whoLikes;
+			register.like = params.like;
 			register.mdate = params.mdate;
 
 			// Save object on DB
@@ -380,14 +383,14 @@ var  controller = {
 		var owner = req.params.id;
 		
 		//find by OwnerID
-		var query = msgDB.find({ownerID : owner});
+		var query = msgDB.find({ownerName : owner});
 
 		if (owner || owner != undefined) {
 			query.limit(20);
 		}
 		
 		// Sort - descending
-		query.sort({date: -1}).exec((err, msgFound) => {
+		query.sort({mdate: -1}).exec((err, msgFound) => {
 
 			if (err) {
 				return res.status(500).send({
@@ -576,6 +579,66 @@ var  controller = {
 			});
 		}
 	},
+
+	//Updating Like's Info
+	updateMsg: (req, res) => {
+
+
+		// Collect id from url
+		var msgID = req.params.id;
+
+		// Collect parameters from put
+		var params = req.body;
+
+		//Validate data (validator)
+
+		try {
+			var validate_whoLikes = !validator.isEmpty(params.whoLikes);
+			var validate_whoVotes = !validator.isEmpty(params.whoVotes);
+
+		} catch (err) {
+			return res.status(200).send({
+				status: 'error',
+				message: 'Faltan datos por enviar !!!'
+			});
+		}
+
+		if (
+			validate_whoLikes &&
+			validate_whoVotes
+		) {
+
+			// Find and update
+			msgDB.findOneAndUpdate({_id: msgID}, params, { new: true }, (err, msgUpdated) => {
+				if (err) {
+					return res.status(500).send({
+						status: 'error',
+						message: 'Error al actualizar !!!'+err
+					});
+				}
+
+				if (!msgUpdated) {
+					return res.status(200).send({
+						status: 'noMsg',
+						message: 'No existe el mensaje !!!'
+					});
+				}
+
+				//return successful answer
+				return res.status(200).send({
+					status: 'success',
+					msgUpdated
+				});
+			});
+		} else {
+			// Return wrong validation msg if validation fails
+			return res.status(200).send({
+				status: 'error',
+				message: 'La validación no es correcta !!!'
+			});
+		}
+	},
+
 
 }; //end of controller
 

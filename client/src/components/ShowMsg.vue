@@ -156,17 +156,18 @@
 			
 			<!--Public msg box buttons-->
 			<v-card class="d-flex justify-center pa-2  mb-6" flat  width="500">
-				<v-card  @click="hola()" class="" flat  width="100%">
-					<v-icon color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
+				<v-card @click="saveLike(i._id)" class="" flat  width="100%">
+					<v-icon v-if="i.like==false" color="grey" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
+					<v-icon v-if="i.like==true" color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=265" class="text-caption text-sm-subtitle-1">Me gusta</span>
 				</v-card>
-				
+			
 				<v-card @click="hola(i._id)" flat  width="100%">
 					<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">comment</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Comentar</span>
 				</v-card>
 				
-				<v-card @click="hola()" flat  width="100%">
+				<v-card @click="hola(i._id)" flat  width="100%">
 					<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">edit</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Editar</span>
 				</v-card>
@@ -232,6 +233,7 @@ export default {
 					img:'',
 					whoVotes:[],
 					whoLikes:[],
+					like:false,
 					mdate:moment(new Date()).format("LLL"),
 				},
 
@@ -240,6 +242,7 @@ export default {
 		
 		methods:{
 			hola(id){
+				this.like=!this.like;
 				console.log("funciona el boton: ",id);
 			},
 			
@@ -311,11 +314,20 @@ export default {
 				.then((res)=>{
 					if (res.data.status=="success"){
 						this.msgData=res.data.msgFound;
-
-						//this.msgID = res.data.msgFound._id;
-						//console.log("el id del mensaje es: ", this.msgID);
-						console.log("la url de la imagen es: ", this.msgData);
 						this.leng=this.msgData.length;
+						//call function that verifies if current user has gifted like to a msg
+						//this.verifylikes();
+						
+						let user_name = localStorage.getItem("userName");
+							for (let i=0; i<this.leng ;i++) {
+								
+							if (this.msgData[i].whoLikes.includes(user_name)){
+								this.msgData[i].like = true;
+							}
+						}
+					console.log("mensajes con like ",this.msgData);
+
+
 					}
 
 				}).catch((error)=>{
@@ -323,7 +335,50 @@ export default {
 					});
 			},
 
-		},
+			saveLike (id){
+				//set  msg's like clicked to true when pressed
+				for (let i=0; i<this.leng ;i++) {
+
+					if (this.msgData[i]._id.includes(id)){
+						if(this.msgData[i].like == true){
+							this.msgData[i].like = false;
+
+							let user_name = localStorage.getItem("userName");
+							let position = this.msgData[i].whoLikes.findIndex(user => user === user_name);
+							if(position || position != -1){
+									this.msgData[i].whoLikes.splice(position,1);
+							console.log("new msgDatasplice",this.msgData);
+							}
+
+						}else{
+								this.msgData[i].like = true;
+
+								let user_name = localStorage.getItem("userName");
+								
+								if(this.msgData[i].whoLikes.includes(user_name)){
+									console.log("");
+								}else{
+									this.msgData[i].whoLikes.push(user_name);
+									console.log("msgData final: ",this.msgData);
+								/*ready to save msg's likes status
+									axios
+									.put(this.url+"/"+id,this.msgData[i].like)
+									.then((req)=>{
+										if(req.data.status == "success"){
+											console.log("cargue exitoso de los likes");
+										}else console.log("hubo un error y no se actualizo el estados de los likes");
+											
+									}).catch((error)=>{
+										console.log("no se pudo conectar con la BD",error);
+										});*/
+								}
+							}
+						}
+					}
+				}//end of saveLike
+				
+			},//end of methods
+
 
 };
 </script>

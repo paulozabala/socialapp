@@ -10,6 +10,7 @@ var msgSchema = Schema({
 	img:String,
 	whoVotes:Array,
 	whoLikes:Array,
+	like:Boolean,
 	mdate:Date,
 	});
 

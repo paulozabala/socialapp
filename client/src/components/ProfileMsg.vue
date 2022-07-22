@@ -46,8 +46,8 @@
 		<!--body-->
 		<v-card flat  tile class="d-flex align-center flex-column mt-2 " width="500">
 			<v-card flat  width="100%">
-				<v-card-title class="d-flex justify-center text-sm-h5">{{'userID: '+i.ownerID}}</v-card-title>
-				<v-card-subtitle class="d-flex justify-start ">{{i.date}}</v-card-subtitle>
+				<v-card-title class="d-flex justify-center text-sm-h5 text-capitalize">{{i.ownerName}}</v-card-title>
+				<v-card-subtitle class="d-flex justify-start ">{{i.mdate}}</v-card-subtitle>
 				<v-card-text class="text-caption text-sm-body-1  text-justify"
 					v-model="messages"
 					outlined
@@ -116,7 +116,7 @@ export default {
 				let msgData = this.msgData;
 
 				for (let i=0;i<this.leng;i++){
-					msgData[i].date = moment(this.msgData[i].date).format('LLL')
+					msgData[i].mdate = moment(this.msgData[i].mdate).format('LLL')
 				}
 				return msgData;
 			},
@@ -124,15 +124,24 @@ export default {
 		},
 
 		created(){
+			
+			//Get user's data to fill profile and msg information.
+
 			this.getUserData();
 
 		},
 		mounted() {
 
-			//Getting user's messages when mounted //every Msg is associated with the user's id.
+			//Getting user's messages when mounted //every Msg is associated with the user's name.
+			//Verify user credentials.
 			//Extracting id from localStorage
-			let userID = localStorage.getItem("id");
+			let userID = localStorage.getItem("userName");
+			//Get id from params.
+			let params = this.$route.params.id;
+
+			if (userID == params ){
 			this.getMsgByOwner(userID);
+			}else console.log("usuario no reconocido");
 		},
 
 

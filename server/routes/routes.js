@@ -12,7 +12,6 @@ var md_upload = multipart({ uploadDir: './upload/profilepics/'});
 //router.post('/save', controller.save);
 //router.get('/articles/:last?', controller.getArticles);
 //router.get('/article/:id', controller.getArticle);
-//router.put('/article/:id', controller.update);
 //router.delete('/article/:id', controller.delete);
 
 
@@ -34,6 +33,7 @@ router.put('/modUser/:id', controller.updateUser);
 router.get('/getMsg', controller.getMsgs);
 router.get('/getMsgByOwner/:id', controller.getMsgByOwner);
 router.post('/saveMsg', controller.saveMsg);
+router.put('/updateMsg/:id', controller.updateMsg);
 
 //Comment routes
 router.get('/getComments/:id', controller.getComments);
