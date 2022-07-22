@@ -49,7 +49,6 @@
 				<v-card-title class="d-flex justify-center text-sm-h5 text-capitalize">{{i.ownerName}}</v-card-title>
 				<v-card-subtitle class="d-flex justify-start ">{{i.mdate}}</v-card-subtitle>
 				<v-card-text class="text-caption text-sm-body-1  text-justify"
-					v-model="messages"
 					outlined
 				>{{i.msg}}</v-card-text>
 			</v-card>
@@ -58,8 +57,9 @@
 		
 		<!--Public msg box buttons-->
 		<v-card class="d-flex justify-center pa-2  mb-6" flat  width="500">
-			<v-card  @click="hola()" class="" flat  width="100%">
-				<v-icon color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
+			<v-card  @click="prepareLike(i._id)" class="" flat  width="100%">
+				<v-icon v-if="i.like==false" color="grey" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
+				<v-icon v-if="i.like==true" color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
 				<span v-if="$vuetify.breakpoint.width>=265" class="text-caption text-sm-subtitle-1">Me gusta</span>
 			</v-card>
 			
@@ -124,24 +124,24 @@ export default {
 		},
 
 		created(){
-			
-			//Get user's data to fill profile and msg information.
-
-			this.getUserData();
-
-		},
-		mounted() {
 
 			//Getting user's messages when mounted //every Msg is associated with the user's name.
 			//Verify user credentials.
 			//Extracting id from localStorage
 			let userID = localStorage.getItem("userName");
+			
 			//Get id from params.
 			let params = this.$route.params.id;
 
 			if (userID == params ){
-			this.getMsgByOwner(userID);
+				this.getMsgByOwner(userID);
 			}else console.log("usuario no reconocido");
+
+			
+			//Get user's data to fill profile and msg information.
+
+			this.getUserData();
+
 		},
 
 
@@ -152,18 +152,17 @@ export default {
 				initimg:Global.initImg,
 				route:'',
 				msgData:'',
+				msg:'',
 				leng:null,
-				//test variables
-				user: 'Fabiano Spaguetti',
-				time: moment().format('h:mm a'),//Date.now()
-
-				messages:'hoy vi que faltaba un pedazo de mi corazón, eras tú!!!'+ 
-					'sin tanto despecho dijo ella con su corazon de piedra y alma fria sin amor.',
-				longmsg:'Lorem ipsum dolor sit amet consectetur adipiscing elit,'+
-					'aenean cubili a enim vulputate vehicula est facilisis, ac libero varius'+
-					'diam maecenas leo. Curabitur inceptos quis integer diam cras velit'+
-					' sollicitudin, fames a id ligula cursus torquent, sagittis habitasse'+
-					' eros cubilia in odio. Libero ridiculus facilisi mattis eu vehicula',
+				msgObj:{
+					ownerName:'',
+					msg:'',
+					img:'',
+					whoVotes:['default'],
+					whoLikes:[],
+					like:false,
+					mdate:moment(new Date()).format("LLL"),
+				},
 			}
 		},
 		
@@ -182,6 +181,16 @@ export default {
 						this.msgData=res.data.msgFound;
 						console.log("msgData es:",this.msgData[2]);
 						this.leng=this.msgData.length;
+
+						//Check if the user has likes on every msg and sets true
+						//the like flag of local msg object to be rendered on webpage.
+						let user_name = localStorage.getItem("userName");
+							for (let i=0; i<this.leng ;i++) {
+								
+								if (this.msgData[i].whoLikes.includes(user_name)){
+								this.msgData[i].like = true;
+								}
+						}
 					}
 
 				}).catch((error)=>{
@@ -209,10 +218,70 @@ export default {
 					}).catch((error)=>{
 						console.log("no fue posible conectar con la BD",error);
 						});
-			}
+			},
+
+			//Prepare liked msg to be updated
+			prepareLike (id){
+
+				//set  msg's like clicked to true when pressed
+				for (let i=0; i<this.leng ;i++) {
+
+					if (this.msgData[i]._id.includes(id)){
+						if(this.msgData[i].like == true){
+							this.msgData[i].like = false;
+
+							let user_name = localStorage.getItem("userName");
+							let position = this.msgData[i].whoLikes.findIndex(user => user === user_name);
+							if(position || position != -1){
+								
+								//takes out username from msg local object
+								this.msgData[i].whoLikes.splice(position,1);
+							
+								//calling function to update like's info in BD
+								this.updateBD(id,i);
+							}
+
+						}else{
+							this.msgData[i].like = true;
+
+							let user_name = localStorage.getItem("userName");
+
+							if(this.msgData[i].whoLikes.includes(user_name)){
+								//if the local msg object that comes from DB has current username added so, skip.
+							}else{
+								
+								//push into local msg object the user wholikes
+								this.msgData[i].whoLikes.push(user_name);
+								
+
+								//calling function to update like's info in BD
+								this.updateBD(id,i);
+
+							}
+						}
+					}
+				}
+			},//end of prepareLike
+				
+			updateBD(id,i){
+
+					//ready to save msg's likes status
+					axios
+						.put(this.url+"updateMsg/"+id,this.msgData[i])
+						.then((req)=>{
+							if(req.data.status == "success"){
+								//cargue exitoso de los likes
+							}else console.log("hubo un error y no se actualizo el estados de los likes");
+								
+						}).catch((error)=>{
+							console.log("no se pudo conectar con la BD",error);
+							});
+
+			},//updateBD funct. ends
 
 
-		},
+
+		},//methods ending
 
 };
 </script>

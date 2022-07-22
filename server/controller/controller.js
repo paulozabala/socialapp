@@ -592,23 +592,7 @@ var  controller = {
 
 		//Validate data (validator)
 
-		try {
-			var validate_whoLikes = !validator.isEmpty(params.whoLikes);
-			var validate_whoVotes = !validator.isEmpty(params.whoVotes);
-
-		} catch (err) {
-			return res.status(200).send({
-				status: 'error',
-				message: 'Faltan datos por enviar !!!'
-			});
-		}
-
-		if (
-			validate_whoLikes &&
-			validate_whoVotes
-		) {
-
-			// Find and update
+		// Find and update
 			msgDB.findOneAndUpdate({_id: msgID}, params, { new: true }, (err, msgUpdated) => {
 				if (err) {
 					return res.status(500).send({
@@ -630,14 +614,7 @@ var  controller = {
 					msgUpdated
 				});
 			});
-		} else {
-			// Return wrong validation msg if validation fails
-			return res.status(200).send({
-				status: 'error',
-				message: 'La validación no es correcta !!!'
-			});
-		}
-	},
+	},//end of updateMsg
 
 
 }; //end of controller

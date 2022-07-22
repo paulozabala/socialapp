@@ -156,7 +156,7 @@
 			
 			<!--Public msg box buttons-->
 			<v-card class="d-flex justify-center pa-2  mb-6" flat  width="500">
-				<v-card @click="saveLike(i._id)" class="" flat  width="100%">
+				<v-card @click="prepareLike(i._id)" class="" flat  width="100%">
 					<v-icon v-if="i.like==false" color="grey" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
 					<v-icon v-if="i.like==true" color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=265" class="text-caption text-sm-subtitle-1">Me gusta</span>
@@ -231,7 +231,7 @@ export default {
 					ownerName:'',
 					msg:'',
 					img:'',
-					whoVotes:[],
+					whoVotes:['default'],
 					whoLikes:[],
 					like:false,
 					mdate:moment(new Date()).format("LLL"),
@@ -315,18 +315,16 @@ export default {
 					if (res.data.status=="success"){
 						this.msgData=res.data.msgFound;
 						this.leng=this.msgData.length;
-						//call function that verifies if current user has gifted like to a msg
-						//this.verifylikes();
 						
+						//Check if the user has likes on every msg and sets true
+						//the like flag of local msg object to be rendered on webpage.
 						let user_name = localStorage.getItem("userName");
 							for (let i=0; i<this.leng ;i++) {
 								
-							if (this.msgData[i].whoLikes.includes(user_name)){
+								if (this.msgData[i].whoLikes.includes(user_name)){
 								this.msgData[i].like = true;
-							}
+								}
 						}
-					console.log("mensajes con like ",this.msgData);
-
 
 					}
 
@@ -335,7 +333,9 @@ export default {
 					});
 			},
 
-			saveLike (id){
+			//Prepare liked msg to be updated
+			prepareLike (id){
+
 				//set  msg's like clicked to true when pressed
 				for (let i=0; i<this.leng ;i++) {
 
@@ -346,39 +346,53 @@ export default {
 							let user_name = localStorage.getItem("userName");
 							let position = this.msgData[i].whoLikes.findIndex(user => user === user_name);
 							if(position || position != -1){
-									this.msgData[i].whoLikes.splice(position,1);
-							console.log("new msgDatasplice",this.msgData);
+								
+								//takes out username from msg local object
+								this.msgData[i].whoLikes.splice(position,1);
+							
+								//calling function to update like's info in BD
+								this.updateBD(id,i);
 							}
 
 						}else{
-								this.msgData[i].like = true;
+							this.msgData[i].like = true;
 
-								let user_name = localStorage.getItem("userName");
+							let user_name = localStorage.getItem("userName");
+
+							if(this.msgData[i].whoLikes.includes(user_name)){
+								//if the local msg object that comes from DB has current username added so, skip.
+							}else{
 								
-								if(this.msgData[i].whoLikes.includes(user_name)){
-									console.log("");
-								}else{
-									this.msgData[i].whoLikes.push(user_name);
-									console.log("msgData final: ",this.msgData);
-								/*ready to save msg's likes status
-									axios
-									.put(this.url+"/"+id,this.msgData[i].like)
-									.then((req)=>{
-										if(req.data.status == "success"){
-											console.log("cargue exitoso de los likes");
-										}else console.log("hubo un error y no se actualizo el estados de los likes");
-											
-									}).catch((error)=>{
-										console.log("no se pudo conectar con la BD",error);
-										});*/
-								}
+								//push into local msg object the user wholikes
+								this.msgData[i].whoLikes.push(user_name);
+								
+
+								//calling function to update like's info in BD
+								this.updateBD(id,i);
+
 							}
 						}
 					}
-				}//end of saveLike
+				}
+			},//end of prepareLike
 				
-			},//end of methods
+			updateBD(id,i){
 
+					//ready to save msg's likes status
+					axios
+						.put(this.url+"updateMsg/"+id,this.msgData[i])
+						.then((req)=>{
+							if(req.data.status == "success"){
+								//cargue exitoso de los likes
+							}else console.log("hubo un error y no se actualizo el estados de los likes");
+								
+						}).catch((error)=>{
+							console.log("no se pudo conectar con la BD",error);
+							});
+
+			},//updateBD funct. ends
+
+		},//end of methods
 
 };
 </script>
