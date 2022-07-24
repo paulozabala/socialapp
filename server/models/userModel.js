@@ -9,13 +9,12 @@ var userSchema = Schema({
 	password:String,
 	name:String,
 	lastname:String,
-	sex:String,
+	sex:Number,
 	description:String,
 	birthday:Date,
 	interests:Array,
-	lookingfor:String,
+	lookingfor:Number,
 	img:String,
-	msg:Array,
 	});
 
 module.exports = mongoose.model('UserS', userSchema);

@@ -306,7 +306,7 @@ export default{
 		getUserData(){
 			//clear userinfo
 			this.userinfo='';
-			this.route=this.url+'getImage/'+this.initUserImg;
+			//this.route=this.url+'getImage/'+this.initUserImg;
 			
 			//Getting id from params in actual url
 			let user = this.$route.params.id;

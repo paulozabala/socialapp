@@ -523,13 +523,8 @@ var  controller = {
 			var validate_password = !validator.isEmpty(params.password);
 			var validate_name = !validator.isEmpty(params.name);
 			var validate_lastname = !validator.isEmpty(params.lastname);
-			var validate_sex = !validator.isEmpty(params.sex);
 			var validate_description = !validator.isEmpty(params.description);
 			var validate_birthday = !validator.isEmpty(params.birthday);
-			var validate_interests = !validator.isEmpty(params.interests);
-			var validate_lookingfor = !validator.isEmpty(params.lookingfor);
-			//var validate_img = !validator.isEmpty(params.img);
-			//var validate_msg = !validator.isEmpty(params.msg);
 
 		} catch (err) {
 			return res.status(200).send({
@@ -542,11 +537,8 @@ var  controller = {
 			validate_password &&
 			validate_name &&
 			validate_lastname &&
-			validate_sex &&
 			validate_description &&
-			validate_birthday &&
-			validate_interests &&
-			validate_lookingfor
+			validate_birthday
 		) {
 
 			// Find and update
@@ -568,7 +560,7 @@ var  controller = {
 				//return successful answer
 				return res.status(200).send({
 					status: 'success',
-					userUp:userUpdated
+					userUpdated
 				});
 			});
 		} else {

@@ -2,7 +2,7 @@
 	<!--Home public msg box(head&body) it has dynamic card's width from props-->
 	<v-card flat color="grey">
 
-		<!--My public msg box-->
+		<!--My writing msg box-->
 		<v-card class="mt-6" width="500">
 			<v-card flat  class="d-flex justify-center pa-2 pt-4 pb-0 " width="500" >
 				<v-card :class="$vuetify.breakpoint.width<=360 ? 'mr-12' : 'mr-4'"  flat  width="15%">
@@ -173,6 +173,29 @@
 				</v-card>
 			</v-card>
 		</v-card><!--End of messages box-->
+
+			<!--Comments box-->
+
+			<v-col>
+				<v-card flat>
+					<v-card-text>
+						<v-row
+						class="mb-4"
+						align="center"
+						>
+							<v-avatar
+								color="grey"
+								class="mr-4"
+							></v-avatar>
+							<strong class="text-h6">Title </strong>
+							<v-spacer></v-spacer>
+						</v-row>
+						<p>
+						ipuat.</p>
+					</v-card-text>
+				</v-card>
+				</v-col>
+
 	</v-card>
 </template>
 
@@ -206,11 +229,14 @@ export default {
 
 		created(){
 
+			//Getting user's data
+			this.getUserData();
+
+
 			//Getting all messages when mounted.
 			this.getMsg();
 			
-			this.getUserData();
-	},
+				},
 
 
 		data: function (){
@@ -319,13 +345,12 @@ export default {
 						//Check if the user has likes on every msg and sets true
 						//the like flag of local msg object to be rendered on webpage.
 						let user_name = localStorage.getItem("userName");
-							for (let i=0; i<this.leng ;i++) {
+						for (let i=0; i<this.leng ;i++) {
 								
-								if (this.msgData[i].whoLikes.includes(user_name)){
+							if (this.msgData[i].whoLikes.includes(user_name)){
 								this.msgData[i].like = true;
-								}
+							}else this.msgData[i].like = false;
 						}
-
 					}
 
 				}).catch((error)=>{
@@ -335,15 +360,16 @@ export default {
 
 			//Prepare liked msg to be updated
 			prepareLike (id){
-
+				
+				let user_name = localStorage.getItem("userName");
+				
 				//set  msg's like clicked to true when pressed
 				for (let i=0; i<this.leng ;i++) {
 
 					if (this.msgData[i]._id.includes(id)){
-						if(this.msgData[i].like == true){
-							this.msgData[i].like = false;
 
-							let user_name = localStorage.getItem("userName");
+						if (this.msgData[i].whoLikes.includes(user_name)){
+							this.msgData[i].like = false;
 							let position = this.msgData[i].whoLikes.findIndex(user => user === user_name);
 							if(position || position != -1){
 								
@@ -352,25 +378,14 @@ export default {
 							
 								//calling function to update like's info in BD
 								this.updateBD(id,i);
-							}
-
+								}
 						}else{
 							this.msgData[i].like = true;
 
-							let user_name = localStorage.getItem("userName");
-
-							if(this.msgData[i].whoLikes.includes(user_name)){
-								//if the local msg object that comes from DB has current username added so, skip.
-							}else{
-								
-								//push into local msg object the user wholikes
-								this.msgData[i].whoLikes.push(user_name);
-								
-
+							//push into local msg object the user wholikes
+							this.msgData[i].whoLikes.push(user_name);
 								//calling function to update like's info in BD
 								this.updateBD(id,i);
-
-							}
 						}
 					}
 				}

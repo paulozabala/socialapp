@@ -9,8 +9,8 @@
 
 			<!--Template where activator will come-->
 			<template v-slot:activator="{ on, attrs }">
-				<v-btn  text :class="$vuetify.breakpoint.width>850 ? 'text-h5 mt-14 ' : 'text-h6 mt-14'"  v-bind="attrs" v-on="on" >
-					<span class="ml-15">Registrarse</span>
+				<v-btn icon v-bind="attrs" v-on="on" >
+					<v-icon>build</v-icon>
 				</v-btn>
 			</template>
 
@@ -56,12 +56,12 @@
 												@blur="$v.password.$touch()"
 											></v-text-field>
 											<v-text-field
-												v-model="user.name"
+												v-model="userObj.name"
 												label="Nombre"
 												required
 											></v-text-field>
 											<v-text-field
-												v-model="user.lastname"
+												v-model="userObj.lastname"
 												label="Apellidos"
 												required
 											></v-text-field>
@@ -69,7 +69,7 @@
 											<v-card-title class="d-flex justify-start  text-h5">Sexo</v-card-title>
 											<v-card class="" flat >
 												<v-list-item-group class="d-flex justify-space-around"
-													v-model="user.sex"
+													v-model="userObj.sex"
 													color="blue accent-2"
 													width="100%"
 												>
@@ -88,7 +88,7 @@
 											<!--Description field-->
 											<v-card-title class="d-flex align-start flex-column text-h6">Breve descripción</v-card-title>
 											<v-text-field
-												v-model="user.description"
+												v-model="userObj.description"
 												label="Descripción"
 												required
 											></v-text-field>
@@ -96,7 +96,7 @@
 											<!--Birthday´s field-->
 											<v-card-title class="d-flex align-start flex-column text-h6">Fecha de nacimiento</v-card-title>
 											<v-date-picker
-												v-model="user.birthday"
+												v-model="userObj.birthday"
 												width="100%"
 												max-width="600px"
 												class="mt-4"
@@ -107,7 +107,7 @@
 											<v-list shaped class="d-flex justify-start" width="100%" >
 												<v-list-item-group 
 													class="d-flex align-start flex-column"
-													v-model="user.interests"
+													v-model="userObj.interests"
 													multiple
 													width="100%"
 												>
@@ -145,7 +145,7 @@
 											<v-card-title class="d-flex justify-start  text-h5">¿Qué estas buscando?</v-card-title>
 											<v-card class="d-flex align-start flex-column" flat >
 												<v-list-item-group class=""
-													v-model="user.lookingfor"
+													v-model="userObj.lookingfor"
 													color="grey"
 													width="100%"
 												>
@@ -179,9 +179,9 @@
 							<v-btn
 								color="blue darken-1"
 								text
-								@click="save(user.userName)"
+								@click="updateUser()"
 							>
-								<h3>Guardar</h3>
+								<h3>Actualizar</h3>
 							</v-btn>
 						</v-card-actions>
 					</form>
@@ -190,7 +190,7 @@
 		</v-dialog>
 		
 		<!--alerts-->
-		<!--Usuario No disponible-->
+		<!--User not available-->
 		<v-dialog
 			v-model="dialogNoAvailable"
 			width="500"
@@ -217,18 +217,18 @@
 			</v-card>
 		</v-dialog>
 		
-		<!--User saved successfully-->
+		<!--User successfully updated-->
 		<v-dialog
-			v-model="dialogSaved"
+			v-model="dialogUpdated"
 			width="500"
 		>
 			<v-card>
 				<v-card-title class="text-h5 light-blue darken-4">
-					<span class="white--text"> Usuario Registrado con Exito</span>
+					<span class="white--text"> Usuario Actualizado con Exito</span>
 				</v-card-title>
 
-				<v-card-text class="text-h6">
-					Usuario creado con Exito, Bienvenido!
+				<v-card-text class="text-h6 pa-2">
+					¡Usuario ha sido actualizado exitosamente!
 				</v-card-text>
 				<v-divider></v-divider>
 				<v-card-actions>
@@ -236,7 +236,7 @@
 					<v-btn
 						color="light-blue darken-4"
 						text
-						@click="dialogSaved = false"
+						@click="dialogUpdated = false"
 					>
 						Aceptar
 					</v-btn>
@@ -254,8 +254,8 @@
 					Proceso No exitoso:
 				</v-card-title>
 
-				<v-card-text class="text-h6">
-					Usuario no pudo ser guardado en nuestra Base de datos
+				<v-card-text class="text-h6 pa-2">
+					¡Ups! Es posible que falte algún dato revisa porfavor. (Usuario no fue actualizado)
 				</v-card-text>
 				<v-divider></v-divider>
 				<v-card-actions>
@@ -277,10 +277,11 @@
 import { validationMixin } from 'vuelidate'
 import { required, maxLength } from 'vuelidate/lib/validators'
 const axios = require('axios');
+import moment from 'moment'
 import {Global} from '../assets/global.js'
 
 export default{
-	name:'Reg_Form',
+	name:'Edit_Form',
 
 	mixins: [validationMixin],
 
@@ -288,11 +289,19 @@ export default{
 		userName: { required, maxLength: maxLength(8) },
 		password: { required, maxLength: maxLength(8) },
 		},
+
+	created(){
+		this.getUserData();
+	},
+
+
+
 	data: function(){
 		return{
+			userInfo:'',
 			dialog:false,
 			dialogNoAvailable:false,
-			dialogSaved:false,
+			dialogUpdated:false,
 			dialogError:false,
 			sexarray:Global.sexarray,
 			interarray:Global.interarray,
@@ -300,19 +309,19 @@ export default{
 			url:'http://localhost:3000/api/',
 			userName:'',
 			password:'',
-			user:{
+			userObj:{
 				userName:'',
 				password:'',
 				name:'',
 				lastname:'',
-				sex:'',
+				sex:null,
 				description:'',
 				birthday:'',
 				interests:[],
-				lookingfor:'',
+				lookingfor:null,
 				img:'',
-				msg:[],
 			},
+			msgData:'',
 		}
 	},
 	computed: {
@@ -332,16 +341,61 @@ export default{
 	},
 	
 	methods:{
+		getUserData(){
+			//clear userinfo¬
+			this.userInfo='';
+
+			//Getting id from params in actual url¬
+			this.user = localStorage.getItem("userName");
+
+			//Getting user's data and linking form variables¬
+			axios
+				.get(this.url+'searchProfile/'+this.user)
+				.then((res)=>{
+					if(res.data.status=="success"){
+						this.userInfo = res.data.userFound[0];
+
+						//Create the route for profile's avatar-img. couldnt be written in computed¬
+						//it causes Get's problems because this.userinfo didnt charge fast enough.¬
+						this.route = this.url+'getImage/'+this.userInfo.img;
+
+						//Copying DB info and linking with page render
+						//transforming date format to be readable for datepicker
+						let birthdate = moment(this.userInfo.birthday).add(1,"day").format("YYYY-MM-DD");
+
+						//userName & password arent linked to userObj bc validation needs to not be into an object
+						this.userName = this.userInfo.userName;
+						this.password = this.userInfo.password;
+						
+						this.userObj.name = this.userInfo.name;
+						this.userObj.lastname = this.userInfo.lastname;
+						this.userObj.sex = this.userInfo.sex;
+						this.userObj.description = this.userInfo.description;
+						this.userObj.birthday = birthdate;
+						this.userObj.interests = this.userInfo.interests;
+						this.userObj.lookingfor = this.userInfo.lookingfor;
+						this.userObj.img = this.userInfo.img;
+
+					}else{
+						//User doesnt exist
+					}
+				}).catch((error)=>{
+					console.log("no fue posible conectar con la BD",error);
+					});
+				},//end of getUserData
+
 
 		//check if doesnt exist(userName) then save
-		save(){
+		updateUser(){
 			
 			//setting to false alert variables
-
 			this.dialogNoAvailable=false;
 			this.dialogSaved=false;
 			this.dialogError=false;
-
+			
+			//prepare userid and userName variables
+			var userId = this.userInfo._id;
+			console.log("id es: ", userId);
 			var userNoBD = this.userName;
 			
 			if ( userNoBD  == "" || userNoBD.length <= 4) {
@@ -359,40 +413,82 @@ export default{
 						}else if (res.data.status == "noUser"){
 
 							//preparing user objet to be sended
-							this.user.userName = this.userName;
-							this.user.password = this.password;
+							this.userObj.userName = this.userName;
+							this.userObj.password = this.password;
 
-							//user doesnt exists then save
+							//user doesnt exist then save
 							axios
-							.post(this.url+'saveUser',this.user)
+							.put(this.url+'modUser/'+userId,this.userObj)
 							.then((req)=>{
 								if(req.data.status == "success"){
-									var userID = req.data.userStored._id;
-									var nameBD = req.data.userStored.userName;
+									var userID = req.data.userUpdated._id;
+									var nameBD = req.data.userUpdated.userName;
 
 									//Put username data in localstorage
 									localStorage.setItem("id", userID);
 									localStorage.setItem("userName", nameBD);
 
 									//Show success msg and redirect to home page
-									this.dialogSaved=true;
-									setTimeout(function () {
-									window.open("/","_self",
-									"menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes");
-									}, 1500);
+									this.dialogUpdated=true;
+									let tempname = this.userInfo.userName;
+									let data = {
+										ownerName:this.userObj.userName,
+										img:this.userObj.img
+									};
+									this.getMsgByOwner(tempname, data);
 
 								}else {
 									this.dialogError=true;
 								}
 							}).catch((err)=>{
-								console.log("Error al guardar en BD",err);
+								console.log("Error al actualizar en BD",err);
 								});
 						}
 					}).catch((error) => {
 						console.log("NO fue posible comprobar Usuario",error);
 						});
 			}
-		},//save function end
+		},//updateUser function end
+
+		//function to get user`s messages
+		getMsgByOwner(id,data){
+			axios
+			.get(this.url+"getMsgByOwner/"+id)
+			.then((res)=>{
+				if (res.data.status=="success"){
+					this.msgData=res.data.msgFound;
+					this.leng=this.msgData.length;
+					
+					for (let i=0; i<this.leng ;i++) {
+						let mID = this.msgData[i]._id;
+						this.updateBD(mID, data);
+					}
+				}
+
+			}).catch((error)=>{
+				console.log("request error, wasnt successful",error);
+				});
+		},//end of getMsgByOwner
+
+			//updating msg ownernames into DB
+			updateBD(id,data){
+
+					//ready to save msg's likes status
+					axios
+						.put(this.url+"updateMsg/"+id,data)
+						.then((req)=>{
+							if(req.data.status == "success"){
+								//cargue exitoso de los likes
+							}else console.log("hubo un error y no se actualizo el estados de los likes");
+								
+						}).catch((error)=>{
+							console.log("no se pudo conectar con la BD",error);
+							});
+
+			},//updateBD funct. ends
+
+
+
 	}//end of methods
 }//end of exportdef
 </script>

@@ -1,6 +1,5 @@
 import express from 'express';
 const router = express.Router();
-//const path = require('path')
 var controller = require('../controller/controller.js');
 
 //middleware files management

@@ -128,15 +128,17 @@ export default {
 			//Getting user's messages when mounted //every Msg is associated with the user's name.
 			//Verify user credentials.
 			//Extracting id from localStorage
-			let userID = localStorage.getItem("userName");
+			//let userID = localStorage.getItem("userName");
 			
 			//Get id from params.
 			let params = this.$route.params.id;
 
-			if (userID == params ){
-				this.getMsgByOwner(userID);
-			}else console.log("usuario no reconocido");
-
+			//if (userID == params ){
+			//	this.getMsgByOwner(params);
+			//}else {
+			//	console.log("usuario no reconocido");
+			this.getMsgByOwner(params);
+			//}
 			
 			//Get user's data to fill profile and msg information.
 
@@ -177,9 +179,7 @@ export default {
 				.get(this.url+"getMsgByOwner/"+id)
 				.then((res)=>{
 					if (res.data.status=="success"){
-						console.log("msgFound es:",res.data.msgFound);
 						this.msgData=res.data.msgFound;
-						console.log("msgData es:",this.msgData[2]);
 						this.leng=this.msgData.length;
 
 						//Check if the user has likes on every msg and sets true
@@ -189,7 +189,7 @@ export default {
 								
 								if (this.msgData[i].whoLikes.includes(user_name)){
 								this.msgData[i].like = true;
-								}
+								}else this.msgData[i].like = false;
 						}
 					}
 
@@ -223,14 +223,15 @@ export default {
 			//Prepare liked msg to be updated
 			prepareLike (id){
 
+				let user_name = localStorage.getItem("userName");
+				
 				//set  msg's like clicked to true when pressed
 				for (let i=0; i<this.leng ;i++) {
 
 					if (this.msgData[i]._id.includes(id)){
-						if(this.msgData[i].like == true){
-							this.msgData[i].like = false;
 
-							let user_name = localStorage.getItem("userName");
+						if (this.msgData[i].whoLikes.includes(user_name)){
+							this.msgData[i].like = false;
 							let position = this.msgData[i].whoLikes.findIndex(user => user === user_name);
 							if(position || position != -1){
 								
@@ -239,28 +240,18 @@ export default {
 							
 								//calling function to update like's info in BD
 								this.updateBD(id,i);
-							}
-
+								}
 						}else{
 							this.msgData[i].like = true;
 
-							let user_name = localStorage.getItem("userName");
-
-							if(this.msgData[i].whoLikes.includes(user_name)){
-								//if the local msg object that comes from DB has current username added so, skip.
-							}else{
-								
-								//push into local msg object the user wholikes
-								this.msgData[i].whoLikes.push(user_name);
-								
-
+							//push into local msg object the user wholikes
+							this.msgData[i].whoLikes.push(user_name);
 								//calling function to update like's info in BD
 								this.updateBD(id,i);
-
-							}
 						}
 					}
 				}
+
 			},//end of prepareLike
 				
 			updateBD(id,i){
