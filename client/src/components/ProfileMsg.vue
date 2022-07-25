@@ -1,79 +1,129 @@
 <template>
 	<!--Home public msg box(head&body) it has dynamic card's width from props-->
 	<v-card flat color="grey">
-	<v-card v-for="i in msgDataOk" :key="i._id" :width="ancho || 500" >
-		<!--Header-->
-		<v-card flat  tile class="d-flex justify-center mt-0" width="500">
-		
-			<!--menu btns(no used in this version) -->
-			<v-card @click="hola()" class="d-flex justify-center flex-column" flat width="100%" >
-				<v-icon block>more_horiz</v-icon>
-			</v-card>
+		<v-card v-for="i in msgDataOk" :key="i._id" :width="ancho || 500" >
+			<!--Header-->
+			<v-card flat  tile class="d-flex justify-center mt-0" width="500">
 			
-			<v-card flat width="100%" ></v-card>
-			
-			<!--avatar btn-->	
-			<v-card flat width="100%" >
-				
-				<v-avatar class="mt-2 mb-2" size="50">
-					<v-img
-						:src=route
-					/>
-				</v-avatar>
-			</v-card>
-			<v-card flat width="100%" ></v-card>
-
-			<!--Rank btns-->		
-			<v-card flat class="d-flex align-center" width="100%">
-				<v-card @click="hola()" flat  width="100%" >
-					<v-icon block color="blue">
-						keyboard_double_arrow_up
-					</v-icon>
+				<!--menu btns(no used in this version) -->
+				<v-card @click="hola()" class="d-flex justify-center flex-column" flat width="100%" >
+					<v-icon block>more_horiz</v-icon>
 				</v-card>
 				
-				<v-card></v-card>
-						
-				<v-card @click="hola()" flat width="100%" >
-					<v-icon block color="red" >
-						keyboard_double_arrow_down
-					</v-icon>
+				<v-card flat width="100%" ></v-card>
+				
+				<!--avatar btn-->	
+				<v-card flat width="100%" >
+					
+					<v-avatar class="mt-2 mb-2" size="50">
+						<v-img
+							:src=route
+						/>
+					</v-avatar>
+				</v-card>
+				<v-card flat width="100%" ></v-card>
+
+				<!--Rank btns-->		
+				<v-card flat class="d-flex align-center" width="100%">
+					<v-card @click="hola()" flat  width="100%" >
+						<v-icon block color="blue">
+							keyboard_double_arrow_up
+						</v-icon>
+					</v-card>
+					
+					<v-card></v-card>
+							
+					<v-card @click="hola()" flat width="100%" >
+						<v-icon block color="red" >
+							keyboard_double_arrow_down
+						</v-icon>
+					</v-card>
 				</v-card>
 			</v-card>
-		</v-card>
 
-		<v-divider width="85%"></v-divider>
-		
-		<!--body-->
-		<v-card flat  tile class="d-flex align-center flex-column mt-2 " width="500">
-			<v-card flat  width="100%">
-				<v-card-title class="d-flex justify-center text-sm-h5 text-capitalize">{{i.ownerName}}</v-card-title>
-				<v-card-subtitle class="d-flex justify-start ">{{i.mdate}}</v-card-subtitle>
-				<v-card-text class="text-caption text-sm-body-1  text-justify"
-					outlined
-				>{{i.msg}}</v-card-text>
+			<v-divider width="85%"></v-divider>
+			
+			<!--body-->
+			<v-card flat  tile class="d-flex align-center flex-column mt-2 " width="500">
+				<v-card flat  width="100%">
+					<v-card-title class="d-flex justify-center text-sm-h5 text-capitalize">{{i.ownerName}}</v-card-title>
+					<v-card-subtitle class="d-flex justify-start ">{{i.mdate}}</v-card-subtitle>
+					<v-card-text class="text-caption text-sm-body-1  text-justify"
+						outlined
+					>
+						{{i.msg}}
+					</v-card-text>
+				</v-card>
 			</v-card>
-		</v-card>
-		<v-divider width="95%"></v-divider>
-		
-		<!--Public msg box buttons-->
-		<v-card class="d-flex justify-center pa-2  mb-6" flat  width="500">
-			<v-card  @click="prepareLike(i._id)" class="" flat  width="100%">
-				<v-icon v-if="i.like==false" color="grey" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
-				<v-icon v-if="i.like==true" color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
-				<span v-if="$vuetify.breakpoint.width>=265" class="text-caption text-sm-subtitle-1">Me gusta</span>
+			<v-divider width="95%"></v-divider>
+			
+			<!--Public msg box buttons-->
+			<v-card class="d-flex justify-center pa-2 mb-4" flat  width="500">
+				<v-card  @click="prepareLike(i._id)" class="" flat  width="100%">
+					<v-icon v-if="i.like==false" color="grey" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
+					<v-icon v-if="i.like==true" color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
+					<span v-if="$vuetify.breakpoint.width>=265" class="text-caption text-sm-subtitle-1">Me gusta</span>
+				</v-card>
+				
+				<v-card @click="comment(i._id)" flat  width="100%">
+					<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">comment</v-icon>
+					<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Comentar</span>
+				</v-card>
+				
+				<v-card @click="hola()" flat  width="100%">
+					<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">edit</v-icon>
+					<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Editar</span>
+				</v-card>
 			</v-card>
 			
-			<v-card @click="hola()" flat  width="100%">
-				<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">comment</v-icon>
-				<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Comentar</span>
-			</v-card>
-			
-			<v-card @click="hola()" flat  width="100%">
-				<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">edit</v-icon>
-				<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Editar</span>
-			</v-card>
-		</v-card>
-	</v-card>
+			<!------------------Comments box------------------->
+			<v-card v-show="i.comment" flat tile class="mb-4" width="" color="grey" height="170">
+				<v-card  flat  tile color="#F4F4F5"  >
+					<v-card-text class="" flat width="200" height="50" color="">
+						<v-card
+							class="mb-2 d-flex justify-end align-center "
+							flat
+							width="90%"
+							height="40"
+							color="#F4F4F5"
+						>
+							<v-avatar
+								color="grey"
+								class="mr-4"
+								size="40"
+							>
+								<v-img :src=route />
+							</v-avatar>
+
+							<strong class="text-subtitle-2">{{userInfo.userName}} </strong>
+							<v-card flat class=" d-flex justify-end " width="100%" color="#F4F4F5">
+								<v-btn @click="sendComment(i._id)" small outlined>Enviar</v-btn>
+							</v-card>
+
+						</v-card>
+							
+						<v-card flat tile   width="90%"  color="#F4F4F5">
+							
+							<v-card flat class="d-flex align-center " height="70" color="#F4F4F5">
+								<v-textarea
+									v-model="commentObj.comment"
+									auto-grow
+									filled
+									color="#1e81b0"
+									rows="1"
+								></v-textarea>
+							</v-card>
+							<v-card flat tile class="d-flex justify-center mb-4" height="10" color="#F4F4F5">
+								<v-card flat width="100%" color="#F4F4F5">
+									<a>Ver comentarios...</a>
+								</v-card>
+							</v-card>
+						</v-card>
+					</v-card-text>
+				</v-card>
+			</v-card><!--end of comment box-->
+
+	</v-card><!--end of msg box--->
 
 	<!--Default Message it is displayed when User doesnt have created a Msg yet-->
 	<v-card v-if="!msgDataOk">
@@ -163,14 +213,36 @@ export default {
 					whoVotes:['default'],
 					whoLikes:[],
 					like:false,
+					comment:false,
 					mdate:moment(new Date()).format("LLL"),
 				},
+				commentObj:{
+					msgID:'',
+					comment:'',
+					ownerName:'',
+					img:'',
+					comDate:moment(new Date()).format("LLL"),
+				},
+				userInfo:'',
+				n:0,
+				bio:'',
 			}
 		},
 		
 		methods:{
 			hola(){
 				alert("funciona el componente Show_Msg");
+			},
+
+			comment(msgID){
+				console.log("aqui esta el panel",msgID);
+				for (let i=0;i<this.leng;i++){
+					if(this.msgData[i]._id == msgID){
+						if (this.msgData[i].comment==true){
+							this.msgData[i].comment=false;
+						}else this.msgData[i].comment=true;
+					}else this.msgData[i].comment=false;
+				}
 			},
 
 			//function to get user's messages
@@ -181,6 +253,11 @@ export default {
 					if (res.data.status=="success"){
 						this.msgData=res.data.msgFound;
 						this.leng=this.msgData.length;
+						
+						this.msgData.map(function(m){
+							m.comment = false;
+						});
+
 
 						//Check if the user has likes on every msg and sets true
 						//the like flag of local msg object to be rendered on webpage.
@@ -208,11 +285,11 @@ export default {
 					.then((res)=>{
 
 						if(res.data.status=="success"){
-							this.userinfo = res.data.userFound[0];
+							this.userInfo = res.data.userFound[0];
 							
 							//creating the route for profile's avatar-img. couldnt be written in computed
 							//it causes Get's problems because this.userinfo didnt charge fast enough.
-								this.route = this.url+'getImage/'+this.userinfo.img;
+								this.route = this.url+'getImage/'+this.userInfo.img;
 					}
 
 					}).catch((error)=>{
@@ -270,10 +347,37 @@ export default {
 
 			},//updateBD funct. ends
 
+			sendComment(msgID){
+				console.log("codigodel mensaje",msgID);
+				//Preparing comment object before being sended to DB
+				this.commentObj.msgID = msgID;
+				this.commentObj.ownerName = localStorage.getItem("userName");
+				this.commentObj.img = this.route;
+
+
+				//saving the object into DB
+				axios
+					.post(this.url+"saveComment",this.commentObj)
+					.then ((req)=>{
+
+						if (req.data.status == "success"){
+							
+							//Dont do anything except delete the comment.
+							this.commentObj.comment = '';
+
+						}else{
+							console.log("mensaje no pudo ser guardado");
+						}
+
+					}).catch((error)=>{
+							console.log("error en la conexion con la BD",error);
+	
+					});
+					
+			},
 
 
 		},//methods ending
-
 };
 </script>
 

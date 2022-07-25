@@ -1,6 +1,6 @@
 <template>
 
-	<v-card color="grey">
+	<v-card flat color="grey">
 		<!--alert for user's profile unexistence-->
 		<v-alert v-model="bar"
 			color="red"
@@ -148,7 +148,7 @@
 				</v-expand-transition>
 			</v-card> <!--end of information card -->
 			
-			<v-card :class="$vuetify.breakpoint.width<=885 ? 'd-flex align-center flex-column pa-0': 'd-flex align-center flex-column pa-0 ml-4'" color="grey" flat  width="530">
+			<v-card flat :class="$vuetify.breakpoint.width<=885 ? 'd-flex align-center flex-column pa-0': 'd-flex align-center flex-column pa-0 ml-4'" color="grey"  width="530">
 				<v-card flat outlined tile class="mt-0" color="grey" width="530">
 					<Profile_Msg :ancho="530" />
 				</v-card><v-spacer></v-spacer>

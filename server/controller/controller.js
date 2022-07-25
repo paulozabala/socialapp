@@ -156,62 +156,36 @@ var  controller = {
 		// Colect parameters from url
 		var params = req.body;
 
-		//Validate data (validator)
 
-		try {
-			var validate_msgID = !validator.isEmpty(params.msgID);
-			var validate_comment = !validator.isEmpty(params.comment);
-			var validate_ownerID = !validator.isEmpty(params.ownerID);
-			var validate_date = !validator.isEmpty(params.date);
+
+		//Create the object for being saved
+
+		var register = new commentsDB();
 		
-		} catch (err) {
-			return res.status(200).send({
-				status: 'error',
-				message: 'Faltan datos por enviar !!!'
-			});
-		}
+		// Passing values to the object
+		register.msgID = params.msgID;
+		register.comment = params.comment;
+		register.ownerName = params.ownerName;
+		register.img = params.img
+		register.comDate = params.comDate;
 
-		if (validate_msgID &&
-			validate_comment &&
-			validate_ownerID &&
-			validate_date
-		) {
+		// saving the object
+	
+		await register.save((err, commentStored) => {
 
-			//Create the object for being saved
-
-			var register = new commentsDB();
-			
-			// Passing values to the object
-			register.msgID = params.msgID;
-			register.comment = params.comment;
-			register.ownerID = params.ownerID;
-			register.date = params.date;
-
-			// saving the object
-		
-			await register.save((err, commentStored) => {
-
-				if (err || !commentStored) {
-					return res.status(404).send({
-						status: 'error',
-						message: 'El comentario no ha sido guardado !!!'
-					});
-				}
-
-				// Return success answer
-				return res.status(200).send({
-					status: 'success',
-					commentStored
+			if (err || !commentStored) {
+				return res.status(404).send({
+					status: 'error',
+					message: 'El comentario no ha sido guardado !!!'
 				});
+			}
 
-			});
-		} else {
+			// Return success answer
 			return res.status(200).send({
-				status: 'error',
-				message: 'Los datos no son válidos, revise si faltan datos!!!'
+				status: 'success',
+				commentStored
 			});
-		}
-
+		});
 	},
 
 

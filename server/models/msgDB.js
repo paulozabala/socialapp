@@ -11,7 +11,9 @@ var msgSchema = Schema({
 	whoVotes:Array,
 	whoLikes:Array,
 	like:Boolean,
+	comment:Boolean,
 	mdate:Date,
+
 	});
 
 module.exports = mongoose.model('msgDB', msgSchema);

@@ -7,8 +7,9 @@ var Schema = mongoose.Schema;
 var commentSchema = Schema({
 	msgID:String,
 	comment:String,
-	ownerID:String,
-	date:Date,
+	ownerName:String,
+	img:String,
+	comDate:Date,
 	});
 
 module.exports = mongoose.model('commentDB', commentSchema);

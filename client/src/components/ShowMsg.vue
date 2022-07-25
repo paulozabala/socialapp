@@ -100,7 +100,7 @@
 		
 
 		<!-----------------Here starts the box of messages on Home page-------------->
-		<v-card v-for="i in msgDataOk" :key="i._id" :width="ancho || 500" >
+		<v-card flat v-for="i in msgDataOk" :key="i._id" :width="ancho || 500" >
 			<!--Header-->
 			<v-card flat  tile class="d-flex justify-center mt-4" width="500">
 			
@@ -149,53 +149,80 @@
 					<v-card-subtitle class="d-flex justify-start ">{{i.mdate}}</v-card-subtitle>
 					<v-card-text class="text-subtitle-1 text-sm-body-1  text-justify"
 						outlined
-					>{{i.msg}}</v-card-text>
+					>
+						{{i.msg}}
+					</v-card-text>
 				</v-card>
 			</v-card>
+			
 			<v-divider width="95%"></v-divider>
 			
 			<!--Public msg box buttons-->
-			<v-card class="d-flex justify-center pa-2  mb-6" flat  width="500">
+			<v-card class="d-flex justify-center pa-2  mb-0" flat  width="500">
 				<v-card @click="prepareLike(i._id)" class="" flat  width="100%">
 					<v-icon v-if="i.like==false" color="grey" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
 					<v-icon v-if="i.like==true" color="#1e81b0" class="material-icons ml-1  mr-1 mr-sm-2">thumb_up</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=265" class="text-caption text-sm-subtitle-1">Me gusta</span>
 				</v-card>
-			
-				<v-card @click="hola(i._id)" flat  width="100%">
+
+				<v-card @click="comment(i._id)" flat  width="100%">
 					<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">comment</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Comentar</span>
 				</v-card>
-				
+
 				<v-card @click="hola(i._id)" flat  width="100%">
 					<v-icon color="#1e81b0" class="material-icons mr-1 mr-sm-2">edit</v-icon>
 					<span v-if="$vuetify.breakpoint.width>=255" class="text-caption text-sm-subtitle-1">Editar</span>
 				</v-card>
 			</v-card>
-		</v-card><!--End of messages box-->
 
-			<!--Comments box-->
-
-			<v-col>
-				<v-card flat>
-					<v-card-text>
-						<v-row
-						class="mb-4"
-						align="center"
+			<!------------------Comments box------------------->
+			<v-card v-show="i.comment" flat tile  width="" color="grey" height="170">
+				<v-card flat shaped tile color="#F4F4F5"  >
+					<v-card-text class="" flat width="200" height="50" color="">
+						<v-card
+							class="mb-2 d-flex justify-end align-center "
+							flat
+							width="90%"
+							height="40"
+							color="#F4F4F5"
 						>
 							<v-avatar
 								color="grey"
 								class="mr-4"
-							></v-avatar>
-							<strong class="text-h6">Title </strong>
-							<v-spacer></v-spacer>
-						</v-row>
-						<p>
-						ipuat.</p>
+								size="40"
+							>
+								<v-img :src=msgObj.img />
+							</v-avatar>
+
+							<strong class="text-subtitle-2">{{msgObj.ownerName}} </strong>
+							<v-card flat class=" d-flex justify-end " width="100%" color="#F4F4F5">
+								<v-btn @click="sendComment(i._id)" small outlined>Enviar</v-btn>
+							</v-card>
+
+						</v-card>
+							
+						<v-card flat tile   width="90%"  color="#F4F4F5">
+							
+							<v-card flat class="d-flex align-center " height="70" color="#F4F4F5">
+								<v-textarea
+									v-model="commentObj.comment"
+									auto-grow
+									filled
+									color="#1e81b0"
+									rows="1"
+								></v-textarea>
+							</v-card>
+							<v-card flat tile class="d-flex justify-center mb-4" height="10" color="#F4F4F5">
+								<v-card flat width="100%" color="#F4F4F5">
+									<a>Ver comentarios...</a>
+								</v-card>
+							</v-card>
+						</v-card>
 					</v-card-text>
 				</v-card>
-				</v-col>
-
+			</v-card>
+		</v-card><!--End of messages box-->
 	</v-card>
 </template>
 
@@ -241,7 +268,6 @@ export default {
 
 		data: function (){
 			return {
-				
 				url:Global.url,
 				msgData:'',
 				leng:null,
@@ -260,9 +286,19 @@ export default {
 					whoVotes:['default'],
 					whoLikes:[],
 					like:false,
+					comment:false,
 					mdate:moment(new Date()).format("LLL"),
-				},
+			},
 
+				commentObj:{
+					msgID:'',
+					comment:'',
+					ownerName:'',
+					img:'',
+					comDate:moment(new Date()).format("LLL"),
+				},
+				n:1,
+				bio:'',
 			}
 		},
 		
@@ -283,6 +319,18 @@ export default {
 				this.msg ='';
 				this.dialog=false;
 				
+			},
+
+
+			comment(msgID){
+				console.log("aqui esta el panel",msgID);
+				for (let i=0;i<this.leng;i++){
+					if(this.msgData[i]._id == msgID){
+						if (this.msgData[i].comment==true){
+							this.msgData[i].comment=false;
+						}else this.msgData[i].comment=true;
+					}else this.msgData[i].comment=false;
+				}
 			},
 
 			//Get User's img information
@@ -307,8 +355,8 @@ export default {
 
 			send(){
 
-				//Preparing object before being sended to DB
-				//this.msgObj.mdate = moment().format("LLL");
+				//Preparing object before being sended to DB(comment flag always has to be false before being sended)
+				this.msgObj.comment = false;
 				
 				//saving the object into DB
 				axios
@@ -317,7 +365,10 @@ export default {
 
 						if (req.data.status == "success"){
 							
+							//Show dialog to confirm success on saving process
 							this.savedDialog = true;
+
+							//adding msg local object to msg's array to be displayed
 							this.msgData.splice(0,0,this.msgObj);
 						}else{
 							console.log("mensaje no pudo ser guardado");
@@ -330,6 +381,34 @@ export default {
 					
 			},
 
+			sendComment(msgID){
+				console.log("codigodel mensaje",msgID);
+				//Preparing comment object before being sended to DB
+				this.commentObj.msgID = msgID;
+				this.commentObj.ownerName = localStorage.getItem("userName");
+				this.commentObj.img = this.msgObj.img;
+
+
+				//saving the object into DB
+				axios
+					.post(this.url+"saveComment",this.commentObj)
+					.then ((req)=>{
+
+						if (req.data.status == "success"){
+							
+							//Dont do anything except delete the comment.
+							this.commentObj.comment = '';
+
+						}else{
+							console.log("mensaje no pudo ser guardado");
+						}
+
+					}).catch((error)=>{
+							console.log("error en la conexion con la BD",error);
+	
+					});
+					
+			},
 
 
 			//--Here starts messages box functions--//
@@ -341,7 +420,12 @@ export default {
 					if (res.data.status=="success"){
 						this.msgData=res.data.msgFound;
 						this.leng=this.msgData.length;
-						
+						this.msgData.map(function(m){
+							m.comment = false;
+						});
+
+
+	
 						//Check if the user has likes on every msg and sets true
 						//the like flag of local msg object to be rendered on webpage.
 						let user_name = localStorage.getItem("userName");
@@ -351,6 +435,7 @@ export default {
 								this.msgData[i].like = true;
 							}else this.msgData[i].like = false;
 						}
+
 					}
 
 				}).catch((error)=>{
@@ -375,7 +460,7 @@ export default {
 								
 								//takes out username from msg local object
 								this.msgData[i].whoLikes.splice(position,1);
-							
+								
 								//calling function to update like's info in BD
 								this.updateBD(id,i);
 								}
@@ -407,8 +492,8 @@ export default {
 
 			},//updateBD funct. ends
 
+
 		},//end of methods
 
 };
 </script>
-

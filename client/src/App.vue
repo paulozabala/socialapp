@@ -133,14 +133,26 @@ export default {
 
 
 	methods:{
-
+		
+		//routing to homepage
 		home(){
-			this.$router.push("/");
-		},
+			let urltemp = this.$route.params;
+			
+			//to avoid self redirection errors
+			if(urltemp!='' || urltemp!="/" || urltemp!=undefined ){
+				this.$router.push("/");
+			} //Dont do anything;
+	},
 
+		//Routing to profilepage
 		Profile(){
 			let user = localStorage.getItem("userName");
+			let urltemp = this.$route.params.id;
+			
+			//to avoid self redirection errors
+			if(urltemp!=user){
 			this.$router.push("/"+user);
+			} //Dont do anything;
 		},
 
 		disconnect(){
