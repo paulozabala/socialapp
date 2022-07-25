@@ -94,9 +94,11 @@
 							>
 								<v-img :src=route />
 							</v-avatar>
-
-							<strong class="text-subtitle-2">{{userInfo.userName}} </strong>
-							<v-card flat class=" d-flex justify-end " width="100%" color="#F4F4F5">
+							<v-card flat  class="d-flex justify-start" color="#F4F4F5" width="25%">
+								<strong class="text-subtitle-2">{{userInfo.userName}} </strong>
+							</v-card>
+		
+							<v-card flat class=" d-flex justify-end ml-auto" width="60%" color="#F4F4F5">
 								<v-btn @click="sendComment(i._id)" small outlined>Enviar</v-btn>
 							</v-card>
 
@@ -115,33 +117,81 @@
 							</v-card>
 							<v-card flat tile class="d-flex justify-center mb-4" height="10" color="#F4F4F5">
 								<v-card flat width="100%" color="#F4F4F5">
-									<a>Ver comentarios...</a>
+									<a @click="bringComments(i._id)">Ver comentarios...</a>
 								</v-card>
 							</v-card>
 						</v-card>
 					</v-card-text>
 				</v-card>
 			</v-card><!--end of comment box-->
+		</v-card><!--end of msg box--->
 
-	</v-card><!--end of msg box--->
+		<!---------------------Dialog to display comments by msgID------------------------>
+		<v-dialog v-model="commentsDialog" width="400">
+			<v-card cols="12" class="d-flex align-center flex-column pa-4" width="100%"  >
+				<v-card-text v-for="c in commentsContainer" :key="c._id"  flat tile class=" pa-6" color="white"  width="100%" >
+					<v-card flat shaped tile color="#F4F4F5"  >
+						<v-card-text class="" flat width="200" height="50" color="">
+							<v-card
+								class="mb-2 d-flex justify-end align-center "
+								flat
+								width="100%"
+								height="40"
+								color="#F4F4F5"
+							>
+								<v-card flat  width="15%" color="#F4F4F5">
+									<v-avatar
+										color="grey"
+										class="mr-4"
+										size="40"
+										
+									>
+										<v-img :src=c.img />
+									</v-avatar>
+								</v-card>
+								<v-card flat class="ml-2" width="25%" color="#F4F4F5">
+									<strong class="text-subtitle-2">{{c.ownerName}} </strong>
+								</v-card>
+								<v-card flat class=" d-flex justify-end " width="60%" color="#F4F4F5">
+									<v-btn @click="editComment()" small outlined>Editar</v-btn>
+								</v-card>
+							</v-card>
+								
+							<v-card flat tile   width="100%"  color="#F4F4F5">
+								
+								<v-card flat class="d-flex align-center " color="#F4F4F5">
+									<v-textarea
+										v-model="c.comment"
+										auto-grow
+										filled
+										color="#1e81b0"
+										rows="1"
+										disabled
+									></v-textarea>
+								</v-card>
+							</v-card>
+						</v-card-text>
+					</v-card>
+				</v-card-text>
+				<v-card-actions flat tile class="d-flex justify-center" width="100%">
+					<v-btn text @click="commentsDialog = false" color="blue accent-8">
+						<v-icon>check_circle</v-icon>
+						<span>Aceptar</span>
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 
-	<!--Default Message it is displayed when User doesnt have created a Msg yet-->
-	<v-card v-if="!msgDataOk">
-		<v-card-title class="text-h5 red lighten-2" ><span class="white--text">¡Ups! ¡Parece que aún no tienes mensajes!</span></v-card-title>
-		<v-card-text class="text-h6 pa-4 ">
-			{{'No tienes un mensaje aún creado,Sin embargo ¿Qué esperas?'+
-			' ve y cuentale al mundo sobre todo aquello que te apasiona!'}}
-			<v-spacer></v-spacer>
-			<v-img class="mt-4" width="60%" :src=this.initimg />
-		</v-card-text>
-
-
-	</v-card>
-
-
-
-
-
+		<!--Default Message it is displayed when User doesnt have created a Msg yet-->
+		<v-card v-if="!msgDataOk">
+			<v-card-title class="text-h5 red lighten-2" ><span class="white--text">¡Ups! ¡Parece que aún no tienes mensajes!</span></v-card-title>
+			<v-card-text class="text-h6 pa-4 ">
+				{{'No tienes un mensaje aún creado,Sin embargo ¿Qué esperas?'+
+				' ve y cuentale al mundo sobre todo aquello que te apasiona!'}}
+				<v-spacer></v-spacer>
+				<v-img class="mt-4" width="60%" :src=this.initimg />
+			</v-card-text>
+		</v-card>
 	</v-card>
 </template>
 
@@ -223,6 +273,9 @@ export default {
 					img:'',
 					comDate:moment(new Date()).format("LLL"),
 				},
+				
+				commentsContainer:'',
+				commentsDialog:false,
 				userInfo:'',
 				n:0,
 				bio:'',
@@ -232,6 +285,10 @@ export default {
 		methods:{
 			hola(){
 				alert("funciona el componente Show_Msg");
+			},
+
+			editComment(){
+				alert("no disponible en esta version");
 			},
 
 			comment(msgID){
@@ -295,6 +352,26 @@ export default {
 					}).catch((error)=>{
 						console.log("no fue posible conectar con la BD",error);
 						});
+			},
+
+			//getComments
+			bringComments(msgID){
+				
+				axios
+				.get(this.url+'getComments/'+msgID)
+				.then((res)=>{
+					if(res.data.status == "success"){
+
+						this.commentsContainer=res.data.commentsFound;
+						console.log("comentarios hallados",this.commentsContainer);
+						this.commentsDialog=true;
+					}
+
+
+				}).catch((error)=>{
+					console.log("error al conectarse con la base de datos",error);
+				});
+
 			},
 
 			//Prepare liked msg to be updated

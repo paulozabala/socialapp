@@ -436,7 +436,7 @@ var  controller = {
 		}
 		
 		// Sort - descending
-		query.sort({date: -1}).exec((err, commentFound) => {
+		query.sort({date: -1}).exec((err, commentsFound) => {
 
 			if (err) {
 				return res.status(500).send({
@@ -445,7 +445,7 @@ var  controller = {
 				});
 			}
 
-			if (!commentFound || commentFound=='' ) {
+			if (!commentsFound || commentsFound=='' ) {
 				return res.status(200).send({
 					status: 'noMsg',
 					message: 'No existen mensajes de este Usuario !!!'
@@ -454,7 +454,7 @@ var  controller = {
 
 			return res.status(200).send({
 				status: 'success',
-				commentFound
+				commentsFound
 			});
 		});
     },

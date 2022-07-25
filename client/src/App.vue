@@ -61,13 +61,7 @@
 									<h3 class="text-capitalize">{{ user }}</h3>
 
 									<v-divider class="my-3"></v-divider>
-									<v-btn
-										depressed
-										rounded
-										text
-									>
-										<Edit_Form/> Editar cuenta
-									</v-btn>
+										<Edit_Form/>
 									<v-divider class="my-3"></v-divider>
 									<v-btn
 										@click="disconnect()"

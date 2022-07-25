@@ -97,7 +97,7 @@
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
-		
+	
 
 		<!-----------------Here starts the box of messages on Home page-------------->
 		<v-card flat v-for="i in msgDataOk" :key="i._id" :width="ancho || 500" >
@@ -179,24 +179,25 @@
 			<!------------------Comments box------------------->
 			<v-card v-show="i.comment" flat tile  width="" color="grey" height="170">
 				<v-card flat shaped tile color="#F4F4F5"  >
-					<v-card-text class="" flat width="200" height="50" color="">
+					<v-card-text class="" flat width="200" height="80" color="">
 						<v-card
 							class="mb-2 d-flex justify-end align-center "
 							flat
 							width="90%"
-							height="40"
+							height="45"
 							color="#F4F4F5"
 						>
-							<v-avatar
-								color="grey"
-								class="mr-4"
-								size="40"
-							>
-								<v-img :src=msgObj.img />
-							</v-avatar>
-
-							<strong class="text-subtitle-2">{{msgObj.ownerName}} </strong>
-							<v-card flat class=" d-flex justify-end " width="100%" color="#F4F4F5">
+								<v-avatar
+									color="#F4F4F5"
+									class="mr-2"
+									size="40"
+								>
+									<v-img :src=msgObj.img />
+								</v-avatar>
+							<v-card class="d-flex justify-start" flat width="25%" color="#F4F4F5">
+								<strong class="text-subtitle-2">{{msgObj.ownerName}} </strong>
+							</v-card>
+							<v-card flat class=" d-flex justify-end " width="60%" color="#F4F4F5">
 								<v-btn @click="sendComment(i._id)" small outlined>Enviar</v-btn>
 							</v-card>
 
@@ -204,25 +205,82 @@
 							
 						<v-card flat tile   width="90%"  color="#F4F4F5">
 							
-							<v-card flat class="d-flex align-center " height="70" color="#F4F4F5">
+							<v-card flat class="d-flex align-center mt-5 " height="60" color="#F4F4F5">
 								<v-textarea
 									v-model="commentObj.comment"
-									auto-grow
+									no-resize
 									filled
 									color="#1e81b0"
-									rows="1"
+									rows="2"
 								></v-textarea>
 							</v-card>
 							<v-card flat tile class="d-flex justify-center mb-4" height="10" color="#F4F4F5">
 								<v-card flat width="100%" color="#F4F4F5">
-									<a>Ver comentarios...</a>
+									<a @click="bringComments(i._id)">Ver comentarios...</a>
 								</v-card>
 							</v-card>
 						</v-card>
 					</v-card-text>
 				</v-card>
+
 			</v-card>
 		</v-card><!--End of messages box-->
+
+		<!---------------------Dialog to display comments by msgID------------------------>
+		<v-dialog v-model="commentsDialog" width="400">
+			<v-card cols="12" class="d-flex align-center flex-column pa-4" width="100%"  >
+				<v-card-text v-for="c in commentsContainer" :key="c._id"  flat tile class=" pa-6" color="white"  width="100%" >
+					<v-card flat shaped tile color="#F4F4F5"  >
+						<v-card-text class="" flat width="200" height="50" color="">
+							<v-card
+								class="mb-2 d-flex justify-end align-center "
+								flat
+								width="100%"
+								height="40"
+								color="#F4F4F5"
+							>
+								<v-card flat  width="15%" color="#F4F4F5">
+									<v-avatar
+										color="grey"
+										class="mr-4"
+										size="40"
+										
+									>
+										<v-img :src=c.img />
+									</v-avatar>
+								</v-card>
+								<v-card flat class="ml-2" width="25%" color="#F4F4F5">
+									<strong class="text-subtitle-2">{{c.ownerName}} </strong>
+								</v-card>
+								<v-card flat class=" d-flex justify-end " width="60%" color="#F4F4F5">
+									<v-btn @click="editComment()" small outlined>Editar</v-btn>
+								</v-card>
+							</v-card>
+								
+							<v-card flat tile   width="100%"  color="#F4F4F5">
+								
+								<v-card flat class="d-flex align-center " color="#F4F4F5">
+									<v-textarea
+										v-model="c.comment"
+										auto-grow
+										filled
+										color="#1e81b0"
+										rows="1"
+										disabled
+									></v-textarea>
+								</v-card>
+							</v-card>
+						</v-card-text>
+					</v-card>
+				</v-card-text>
+				<v-card-actions flat tile class="d-flex justify-center" width="100%">
+					<v-btn text @click="commentsDialog = false" color="blue accent-8">
+						<v-icon>check_circle</v-icon>
+						<span>Aceptar</span>
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 	</v-card>
 </template>
 
@@ -278,6 +336,7 @@ export default {
 				rules: [v => v.length <= 300 || 'Max 300 caracteres'],
 				value: 'Escribe tu historia aqui...',
 				savedDialog:false,
+				commentsDialog:false,
 
 				msgObj:{
 					ownerName:'',
@@ -297,8 +356,10 @@ export default {
 					img:'',
 					comDate:moment(new Date()).format("LLL"),
 				},
+
+				commentsContainer:'',
 				n:1,
-				bio:'',
+				bio:3,
 			}
 		},
 		
@@ -307,7 +368,10 @@ export default {
 				this.like=!this.like;
 				console.log("funciona el boton: ",id);
 			},
-			
+		
+			editComment(){
+				alert("no disponible en esta version");
+			},
 			
 			//--Here starts the writing box's functions--//
 			
@@ -321,9 +385,8 @@ export default {
 				
 			},
 
-
+			//Toggler: allows add or close comment's card
 			comment(msgID){
-				console.log("aqui esta el panel",msgID);
 				for (let i=0;i<this.leng;i++){
 					if(this.msgData[i]._id == msgID){
 						if (this.msgData[i].comment==true){
@@ -352,6 +415,32 @@ export default {
 							console.log("error al consultar con la base de datos",error);
 							});
 			},
+
+			//getComments
+			
+			bringComments(msgID){
+				
+				axios
+				.get(this.url+'getComments/'+msgID)
+				.then((res)=>{
+					if(res.data.status == "success"){
+
+						this.commentsContainer=res.data.commentsFound;
+						console.log("comentarios hallados",this.commentsContainer);
+						this.commentsDialog=true;
+					}
+
+
+				}).catch((error)=>{
+					console.log("error al conectarse con la base de datos",error);
+				});
+
+			},
+
+
+
+
+
 
 			send(){
 

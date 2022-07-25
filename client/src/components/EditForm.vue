@@ -9,8 +9,8 @@
 
 			<!--Template where activator will come-->
 			<template v-slot:activator="{ on, attrs }">
-				<v-btn icon v-bind="attrs" v-on="on" >
-					<v-icon>build</v-icon>
+				<v-btn text rounded  v-bind="attrs" v-on="on"  >
+					<v-icon>build</v-icon> Editar Cuenta
 				</v-btn>
 			</template>
 
@@ -33,7 +33,14 @@
 								
 										<!--wrapping form's content or fields-->
 										<v-card class="justify-start" flat width="600px">
-											
+											<v-checkbox class="pb-2"
+												v-model="noChange"
+												label=" No cambiar el nombre de usuario"
+												color="blue accent-8"
+												value=""
+												hide-details
+											></v-checkbox>
+											<v-spacer></v-spacer>
 											<v-text-field width="100%"
 												v-model="userName"
 												:error-messages="nameErrors"
@@ -43,6 +50,7 @@
 												required
 												@input="$v.userName.$touch()"
 												@blur="$v.userName.$touch()"
+												:disabled=noChange
 											></v-text-field>
 											<v-text-field width="100%"
 												v-model="password"
@@ -179,7 +187,7 @@
 							<v-btn
 								color="blue darken-1"
 								text
-								@click="updateUser()"
+								@click="verifyUser()"
 							>
 								<h3>Actualizar</h3>
 							</v-btn>
@@ -322,6 +330,7 @@ export default{
 				img:'',
 			},
 			msgData:'',
+			noChange:false,
 		}
 	},
 	computed: {
@@ -386,7 +395,7 @@ export default{
 
 
 		//check if doesnt exist(userName) then save
-		updateUser(){
+		verifyUser(){
 			
 			//setting to false alert variables
 			this.dialogNoAvailable=false;
@@ -395,60 +404,78 @@ export default{
 			
 			//prepare userid and userName variables
 			var userId = this.userInfo._id;
-			console.log("id es: ", userId);
 			var userNoBD = this.userName;
 			
-			if ( userNoBD  == "" || userNoBD.length <= 4) {
-				alert('Porfavor ingrese un usuario mayor a 4 caracteres');
+			if (this.noChange===true){
+				this.updateUser(userId);
+			}else{
+
+				if ( userNoBD  == "" || userNoBD.length <= 4) {
+					alert('Porfavor ingrese un usuario mayor a 4 caracteres');
+				}
+
+				//User's name length must be above 4 chars at least
+				if (userNoBD.length > 4){
+
+					//doing the request if user exists
+					axios
+						.get(this.url + "searchProfile/" + userNoBD)
+						.then((res) => {
+							if (res.data.status == "success") {
+								this.dialogNoAvailable=true;
+
+							}else if (res.data.status == "noUser" ){
+
+								this.updateUser(userId);
+
+							}
+
+						}).catch((error) => {
+							console.log("NO fue posible comprobar Usuario",error);
+							});
+				}
 			}
-			//User's name length must be above 4 chars at least
-			if (userNoBD.length > 4){
 
-				//doing the request if user exists
-				axios
-					.get(this.url + "searchProfile/" + userNoBD)
-					.then((res) => {
-						if (res.data.status == "success") {
-							this.dialogNoAvailable=true;
-						}else if (res.data.status == "noUser"){
-
-							//preparing user objet to be sended
-							this.userObj.userName = this.userName;
-							this.userObj.password = this.password;
-
-							//user doesnt exist then save
-							axios
-							.put(this.url+'modUser/'+userId,this.userObj)
-							.then((req)=>{
-								if(req.data.status == "success"){
-									var userID = req.data.userUpdated._id;
-									var nameBD = req.data.userUpdated.userName;
-
-									//Put username data in localstorage
-									localStorage.setItem("id", userID);
-									localStorage.setItem("userName", nameBD);
-
-									//Show success msg and redirect to home page
-									this.dialogUpdated=true;
-									let tempname = this.userInfo.userName;
-									let data = {
-										ownerName:this.userObj.userName,
-										img:this.userObj.img
-									};
-									this.getMsgByOwner(tempname, data);
-
-								}else {
-									this.dialogError=true;
-								}
-							}).catch((err)=>{
-								console.log("Error al actualizar en BD",err);
-								});
-						}
-					}).catch((error) => {
-						console.log("NO fue posible comprobar Usuario",error);
-						});
-			}
 		},//updateUser function end
+
+
+		updateUser(userId){
+
+			//preparing user objet to be sended
+			this.userObj.userName = this.userName;
+			this.userObj.password = this.password;
+
+			//user doesnt exist then save
+			axios
+			.put(this.url+'modUser/'+userId,this.userObj)
+			.then((req)=>{
+				if(req.data.status == "success"){
+					var userID = req.data.userUpdated._id;
+					var nameBD = req.data.userUpdated.userName;
+
+					//Put username data in localstorage
+					localStorage.setItem("id", userID);
+					localStorage.setItem("userName", nameBD);
+
+					//Show success msg and redirect to home page
+					this.dialogUpdated=true;
+					let tempname = this.userInfo.userName;
+					let data = {
+						ownerName:this.userObj.userName,
+						img:this.userObj.img
+					};
+					this.getMsgByOwner(tempname, data);
+
+				}else {
+					this.dialogError=true;
+				}
+			}).catch((err)=>{
+				console.log("Error al actualizar en BD",err);
+				});
+		},
+
+
+
 
 		//function to get user`s messages
 		getMsgByOwner(id,data){
@@ -470,22 +497,21 @@ export default{
 				});
 		},//end of getMsgByOwner
 
-			//updating msg ownernames into DB
-			updateBD(id,data){
+		//updating msg ownername into DB
+		updateBD(id,data){
 
-					//ready to save msg's likes status
-					axios
-						.put(this.url+"updateMsg/"+id,data)
-						.then((req)=>{
-							if(req.data.status == "success"){
-								//cargue exitoso de los likes
-							}else console.log("hubo un error y no se actualizo el estados de los likes");
-								
-						}).catch((error)=>{
-							console.log("no se pudo conectar con la BD",error);
-							});
-
-			},//updateBD funct. ends
+				//ready to save msg's likes status
+				axios
+					.put(this.url+"updateMsg/"+id,data)
+					.then((req)=>{
+						if(req.data.status == "success"){
+							//cargue exitoso de los likes
+						}else console.log("hubo un error y no se actualizo el estados de los likes");
+							
+					}).catch((error)=>{
+						console.log("no se pudo conectar con la BD",error);
+						});
+		},//updateBD funct. ends
 
 
 
