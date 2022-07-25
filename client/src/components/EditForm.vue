@@ -462,7 +462,7 @@ export default{
 					let tempname = this.userInfo.userName;
 					let data = {
 						ownerName:this.userObj.userName,
-						img:this.userObj.img
+						img:this.url+'getImage/'+this.userObj.img,
 					};
 					this.getMsgByOwner(tempname, data);
 
